@@ -6,8 +6,9 @@ import './css/index.css'
 import './assets/styles/reset.css'
 import './assets/styles/border.css'
 import './assets/styles/iconfont.css'
-import { Button, Icon } from 'ant-design-vue'
+import { Button, Icon, Tabs } from 'ant-design-vue'
 Vue.use(Icon)
+Vue.use(Tabs)
 Vue.use(Button)
 Vue.config.productionTip = false
 

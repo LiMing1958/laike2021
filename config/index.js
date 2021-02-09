@@ -6,13 +6,12 @@ const path = require('path')
 
 module.exports = {
   dev: {
-
     // Paths fiddler charles
     assetsSubDirectory: 'static',
     assetsPublicPath: '/project',
     proxyTable: {
       '/api': {
-        target: 'https://v3pro.houjiemeishi.com//index.php'
+        target: 'https://v3pro.houjiemeishi.com/'
       }
     },
 
