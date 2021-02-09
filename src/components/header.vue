@@ -21,6 +21,7 @@
       <span class="iconfont">&#xe600;</span>
       <span>客服服务</span>
       <i>|</i>
+      <span class="iconfont">&#xe75c;</span>
       <span>下载APP</span>
     </div>
   </div>
