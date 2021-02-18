@@ -8,16 +8,28 @@ module.exports = {
   dev: {
     // Paths fiddler charles
     assetsSubDirectory: 'static',
-    assetsPublicPath: '/project',
+    assetsPublicPath: '/',
     proxyTable: {
       '/api': {
-        target: 'https://v3pro.houjiemeishi.com/'
+        target: 'https://v3pro.houjiemeishi.com/',
+        changeOrigin: true,
+        pathRewrite: {
+          '^/api': ''
+        }
       }
+      // '/': {
+      //   target: 'http://192.168.1.197:8090/api/',
+      //   changeOrigin: true,
+      //   ws: true,
+      //   pathRewrite: {
+      //     '^/': ''
+      //   }
+      // }
     },
 
     // Various Dev Server settings
     open: true,
-    host: '192.168.1.21', // can be overwritten by process.env.HOST
+    host: 'localhost', // can be overwritten by process.env.HOST
     port: 8080, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
     autoOpenBrowser: true,
     errorOverlay: true,

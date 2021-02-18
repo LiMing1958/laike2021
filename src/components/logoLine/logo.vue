@@ -21,7 +21,8 @@ export default {
 <style scoped lang="scss">
   .logo {
     width: 100%;
-    height: 165px;
-    background-color: #e5ffeb;
+    /*height: 156px;*/
+    /*border-bottom: 2px solid #e8e8e8*/
+    /*background-color: #e5ffeb;*/
   }
 </style>

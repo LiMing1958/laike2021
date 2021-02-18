@@ -36,6 +36,7 @@ export default {
         .iconfont {
           font-size: 30px!important;
           color: #989898;
+          cursor: pointer;
           &:nth-child(1) {
             margin-right: 20px;
           }
