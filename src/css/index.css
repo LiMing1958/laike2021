@@ -1,0 +1,21 @@
+.ant-tabs-nav .ant-tabs-tab {
+    margin: 0 5px 0 0!important;
+    padding: 12px 12px 12px 15px!important;
+}
+ .ant-tabs-nav .ant-tabs-tab-active {
+     color: #d4282d;
+ }
+.ant-tabs-ink-bar {
+    background-color: #d4282d;
+}
+.ant-tabs-bar {
+     margin: 0 0 1px 0;
+    border-bottom: 1px solid #e8e8e8;
+    outline: none;
+    transition: padding 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+}
+.ant-tabs-nav-container {
+    padding-left: 20px;
+    max-width: 1300px;
+    margin: 0 auto;
+}
