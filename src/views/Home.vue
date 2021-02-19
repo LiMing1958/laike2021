@@ -1,16 +1,19 @@
 <template>
   <div class="home">
-    <HeaderList></HeaderList>
+    <HeadList></HeadList>
+    <logo></logo>
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
-import HeaderList from '../components/header'
+import HeadList from '../components/head/headList'
+import logo from '../components/logoLine/logo'
 export default {
   name: 'Home',
   components: {
-    HeaderList
+    HeadList,
+    logo
   }
 }
 </script>
