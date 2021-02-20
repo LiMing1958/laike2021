@@ -2,6 +2,7 @@
   <div class="home">
     <HeadList></HeadList>
     <logo></logo>
+    <foot></foot>
   </div>
 </template>
 
@@ -9,11 +10,13 @@
 // @ is an alias to /src
 import HeadList from '../components/head/headList'
 import logo from '../components/logoLine/logo'
+import foot from '../components/footer/footer'
 export default {
   name: 'Home',
   components: {
     HeadList,
-    logo
+    logo,
+    foot
   }
 }
 </script>

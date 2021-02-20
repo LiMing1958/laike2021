@@ -115,10 +115,10 @@ export default {
     display: none;
   }
   li:nth-child(n+2) {
-    width: 244px;
+    width: 269px;
     height: 288px;
     .imgContent {
-      width: 244px;
+      width: 269px;
       height: 210px;
       position: relative;
       .coverContent {
@@ -140,14 +140,14 @@ export default {
       }
     }
     p:nth-child(2) {
-      width: 244px;
+      width: 269px;
       font-weight: bold;
       font-size: 14px;
       font-weight: bold;
       color: black;
     }
     img {
-      width: 244px;
+      width: 269px;
       height: 210px;
     }
   }

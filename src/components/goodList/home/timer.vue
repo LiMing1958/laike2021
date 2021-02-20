@@ -1,10 +1,28 @@
 <template>
   <div class="time-Box">
-    <span>{{hour? hourString: '00'}}</span>
-    <span>：</span>
-    <span>{{minute ? minuteString : '00'}}</span>
-    <span>：</span>
-    <span>{{second ? secondString : '00'}}</span>
+    <span v-if="hour" class="has-hourStr">
+      <span v-for="item in hourString" :key="item">{{item}}</span>
+    </span>
+    <span v-else class="no-hourStr">
+      <span>0</span>
+      <span>0</span>
+    </span>
+    <span class="count">：</span>
+    <span v-if="minute" class="has-minuteStr">
+      <span v-for="item in minuteString" :key="item">{{item}}</span>
+    </span>
+    <span v-else class="no-minuteStr">
+      <span>0</span>
+      <span>0</span>
+    </span>
+    <span class="count">：</span>
+    <span v-if="hour" class="has-secondStr">
+      <span v-for="item in hourString" :key="item">{{item}}</span>
+    </span>
+    <span v-else class="no-secondStr">
+      <span>0</span>
+      <span>0</span>
+    </span>
   </div>
 </template>
 
@@ -64,7 +82,7 @@ export default {
   },
   computed: {
     hourString () {
-      return this.formatNum(this.hour)
+      return [...new Set(this.formatNum(this.hour))]
     },
     minuteString () {
       return this.formatNum(this.minute)
@@ -77,43 +95,39 @@ export default {
 </script>
 <style scoped lang="scss">
 .time-Box {
-  span {
-    color: #ffffff;
-    font-size: 18px;
-    line-height: 32px;
-    margin-right: 5px;
-    &:nth-child(1) {
-      display: inline-block;
-      width: 32px;
-      height: 32px;
-      text-align: center;
-      /*line-height: 32;*/
-      background-color: rgba(112, 92, 71);
+  .count {
+    font-size: 24px;
+    font-weight: 400;
+    color: #333333;
+  }
+  .no-hourStr {
+    span {
+      background-color: #333333;
+      font-size: 24px;
+      color: #ffffff;
+      padding: 2.5px 9.329px;
+      margin: 0 4px;
+      border-radius: 2px;
     }
-    &:nth-child(2) {
-      font-size: 20px;
-      /*font-weight: inherit;*/
-      color: rgb(112, 92, 71);
+  }
+  .no-minuteStr {
+    span {
+      background-color: #333333;
+      font-size: 24px;
+      color: #ffffff;
+      padding: 2.5px 9.329px;
+      margin: 0 4px;
+      border-radius: 2px;
     }
-    &:nth-child(3) {
-      text-align: center;
-      /*line-height: 32;*/
-      display: inline-block;
-      width: 32px;
-      height: 32px;
-      background-color: rgba(112, 92, 71);
-    }
-    &:nth-child(4) {
-      font-size: 20px;
-      color: rgb(112, 92, 71);
-    }
-    &:nth-child(5) {
-      display: inline-block;
-      width: 32px;
-      height: 32px;
-      text-align: center;
-      /*line-height: 32;*/
-      background-color: rgb(112, 92, 71);
+  }
+  .no-secondStr {
+    span {
+      background-color: #333333;
+      font-size: 24px;
+      color: #ffffff;
+      padding: 2.5px 9.329px;
+      margin: 0 4px;
+      border-radius: 2px;
     }
   }
 }

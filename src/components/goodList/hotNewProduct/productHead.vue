@@ -19,6 +19,7 @@
 export default {
   name: 'hotNewProductHead',
   data () {
+    return {}
   },
   methods: {
   }
@@ -73,7 +74,7 @@ export default {
         p {
           position: absolute;
           bottom: 0;
-          right: 0;
+          right: 5px;
           cursor: pointer;
         }
       }

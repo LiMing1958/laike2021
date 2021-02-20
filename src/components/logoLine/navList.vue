@@ -1,17 +1,17 @@
 <template>
   <div class="navList">
-    <a-tabs default-active-key="1" :size="small">
+    <a-tabs default-active-key="1">
       <a-tab-pane v-for = "item in navList" :key="item.id">
-<!--        <div class="tab-p" >-->
-          <p slot="tab">
+        <div slot="tab" @click="toHome">
+          <p>
             {{item.pname}}
           </p>
-          <p slot="tab">
+          <p>
             {{item.english_name}}
           </p>
-<!--        </div>-->
+        </div>
         <div class="tabContain">
-          <goodList :itemId="item.id"></goodList>
+          <home v-if="item.id === 0"></home>
         </div>
       </a-tab-pane>
     </a-tabs>
@@ -19,7 +19,7 @@
 </template>
 <script>
 import api from '../../api/api'
-import goodList from '../goodList/goodList'
+import home from '../goodList/goodList'
 export default {
   name: 'navList',
   data () {
@@ -29,7 +29,7 @@ export default {
     }
   },
   components: {
-    goodList
+    home
   },
   created () {
 
@@ -61,6 +61,9 @@ export default {
           this.navList = listData
         }
       }).catch(err => console.log(err))
+    },
+    toHome () {
+      this.$store.commit('toHome', 'HomeList')
     }
   }
 }
@@ -73,9 +76,8 @@ export default {
     margin-top: 35px;
     .tabContain {
       width: 100%!important;
-      /*height:100%!important;*/
+      min-height: calc( 100vh - 762px );
       padding: -20px 0px 0px 0px!important;
-      /*background-color: #ffd63e !important;*/
     }
     /*.tab-p {*/
       p {
@@ -85,6 +87,7 @@ export default {
           font-weight: bold;
           line-height: 16px;
           margin-bottom: 1px;
+          /*color: #020202;*/
         }
       }
     /*}*/

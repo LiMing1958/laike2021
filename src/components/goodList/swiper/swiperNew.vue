@@ -38,8 +38,10 @@ export default {
   },
   methods: {
     move () {
-      const left = `-${this.currentIndex * 100}%`
-      this.$refs.container.style.left = left
+      if (this.$store.state.showPage === 'HomeList' && this.$refs.container) {
+        const left = `-${this.currentIndex * 100}%`
+        this.$refs.container.style.left = left
+      }
     },
     doTheAnimate (arg) {
       console.log(this.banner.length)
@@ -50,7 +52,7 @@ export default {
         this.currentIndex = arg
         // 鼠标点击
       } else if (typeof (arg) === 'string') {
-        if (arg && arg === 'left' && this.currentIndex <= this.banner.length) {
+        if (arg && arg === 'left' && this.currentIndex < this.banner.length - 1) {
           this.currentIndex++
         } else if (arg && arg === 'right' && this.currentIndex >= 1) {
           this.currentIndex--

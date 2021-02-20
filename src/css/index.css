@@ -1,9 +1,10 @@
 .ant-tabs-nav .ant-tabs-tab {
+    cursor: pointer!important;
     margin: 0 5px 0 0!important;
     padding: 12px 12px 12px 15px!important;
 }
  .ant-tabs-nav .ant-tabs-tab-active {
-     color: #d4282d;
+     color: #d4282d!important;
  }
 .ant-tabs-ink-bar {
     background-color: #d4282d;
@@ -18,4 +19,12 @@
     padding-left: 20px;
     max-width: 1300px;
     margin: 0 auto;
+}
+.ant-progress-bg {
+    height: 12px!important;
+    border-radius: 0px!important;
+    background-color: #ffc3fe;
+}
+.ant-progress-inner {
+    background-color: #FFE5E5;
 }
