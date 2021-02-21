@@ -20,3 +20,9 @@ export default {
   }
 }
 </script>
+
+<style scoped lang="scss">
+  .home {
+    background: #F6F6F6;
+  }
+</style>

@@ -53,7 +53,7 @@ export default {
         this.hotRecommendList = res.data.data.list_r
         this.newProduct = res.data.data.list_x
         this.seconds = res.data.data.seconds
-        // console.log(this.sliders)
+        this.$store.commit('secondTime', this.seconds)
       })
     }
   }

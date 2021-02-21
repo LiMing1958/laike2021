@@ -5,7 +5,8 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    showPage: 'HomeList'
+    showPage: 'HomeList',
+    secondTime: null
   },
   mutations: {
     toMoreSecPage (state, showPage) {
@@ -13,6 +14,9 @@ export default new Vuex.Store({
     },
     toHome (state, showPage) {
       state.showPage = showPage
+    },
+    secondTime (state, secondTime) {
+      state.secondTime = secondTime
     }
   },
   actions: {

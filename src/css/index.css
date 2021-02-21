@@ -28,3 +28,11 @@
 .ant-progress-inner {
     background-color: #FFE5E5;
 }
+.ant-pagination-item-active {
+    font-weight: 500;
+    background: #fff;
+    border-color: #ff3222;
+}
+.ant-pagination-item-active a {
+    color: red;
+}
