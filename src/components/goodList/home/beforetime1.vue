@@ -29,7 +29,8 @@
 <script>
 // import Event from '../../../assets/js/event'
 export default {
-  name: 'timer',
+  name: 'beforetime',
+  props: ['endTime'],
   data () {
     return {
       hour: '',
@@ -83,7 +84,8 @@ export default {
   },
   computed: {
     ramaintime: function () {
-      const endTime = this.$store.state.secondTime.current_time[0].endtime
+      // console.log(this.endTime)
+      const endTime = this.endTime
       const endTimeArr = endTime.split(':')
       var endtime = parseInt(endTimeArr[0]) * 3600 + parseInt(endTimeArr[1]) * 60 + parseInt(endTimeArr[2])
       const curDate = new Date()

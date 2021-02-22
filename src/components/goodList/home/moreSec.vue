@@ -7,9 +7,11 @@
           <img src="../../../assets/images/Seconds2_icon.png" alt="">
         </div>
         <div class="top-content-right">
-          <h2>距离结束</h2>
+          <h2>{{SecStatus}}</h2>
           <div class="timer">
-            <timer></timer>
+            <timer v-if="isShow === 1"></timer>
+            <overtime v-if="isShow === 0"></overtime>
+            <beforetime :endTime="endtime" v-if="isShow === 2"></beforetime>
           </div>
         </div>
       </div>
@@ -17,10 +19,10 @@
     <div class="container">
       <div class="time-list">
         <ul>
-          <li v-for="item in timelist" :key="item.name" :class="{seconding: item.type === 1}" @click="handleClick(event)">
+          <li v-for="item in timeList" :key="item.name" :class="{seconding: item.type === 1}" @click.stop="handleClick(item.type, item.endtime, item.id)">
             <div>
               <h2>{{item.title}}</h2>
-              <p>{{ item.type === 1 ? '抢购中' : item.type === 2 ? '未开始' : '已结束' }}</p>
+              <p>{{ item.type === 1 ? '抢购中' : item.type === 2 ? '即将开枪' : '已结束' }}</p>
             </div>
           </li>
         </ul>
@@ -28,7 +30,11 @@
       <div class="list">
         <ul>
           <li v-for="item in list" :key="item.pro_id">
-            <img :src="item.imgurl" alt="">
+            <div class="imgBox">
+              <img :src="item.imgurl" alt="">
+              <div class="coverContent" v-if="item.type === 0">已结束</div>
+              <div class="coverContent" v-if="item.type === 2">即将开始</div>
+            </div>
             <div class="list-MsgBox">
               <p>{{item.product_title}}</p>
               <p>
@@ -38,7 +44,9 @@
               <label for="price" style="color: red">抢购价</label>
               <p id="price">{{'￥' + item.seconds_price}}</p>
               <p class="old-price">{{item.price}}</p>
-              <p @click="panicBuying" class="panic-buying">立即抢购</p>
+              <p @click="panicBuying" class="panic-buying" v-if="item.type === 1">立即抢购</p>
+              <p class="over-Time" v-if="item.type === 0">已结束</p>
+              <p class="over-Time" v-if="item.type === 2">即将开始</p>
               <p class="had-buy">已有 <span>{{parseInt(item.max_num) - item.num}}</span> 人抢购成功</p>
             </div>
           </li>
@@ -46,28 +54,40 @@
       </div>
     </div>
     <div class="Pagination">
-      <a-pagination v-model="current" :total="list.length" show-less-items />
+      <a-pagination v-model="current" :total="length" show-less-items />
     </div>
   </div>
 </template>
 
 <script>
 import timer from './timer'
+import overtime from './overtime'
+import beforetime from './beforetime1'
 import api from '../../../api/api'
+// import Event from '../../../assets/js/event'
 export default {
   name: 'secondcontainer',
   data () {
     return {
-      timelist: null,
+      timeList: null,
       list: null,
-      current: '1'
+      length: 1,
+      current: 1,
+      isShow: 1,
+      endtime: null,
+      SecStatus: '距离结束',
+      params: {
+        id: null
+      }
     }
   },
-  created () {
+  mounted () {
     this.getTime()
   },
   components: {
-    timer
+    timer,
+    overtime,
+    beforetime
   },
   methods: {
     getTime () {
@@ -75,28 +95,60 @@ export default {
         module: 'app_pc',
         action: 'seckill',
         m: 'seckillhome',
-        page: this.current
+        page: this.current,
+        id: this.params.id
       }
       api.getSecondTimeAPI(params).then(res => {
-        this.timelist = res.data.time_list
+        this.timeList = res.data.time_list
         this.list = res.data.list
+        this.length = res.data.list.length
         console.log(res)
       })
     },
     panicBuying () {
       alert('555')
     },
-    handleClick () {
+    handleClick (type, endtime, id) {
+      this.params.id = id
+      this.getTime()
+      if (type === 0) {
+        this.SecStatus = '已结束'
+        this.isShow = 0
+      } else if (type === 1) {
+        this.SecStatus = '距离结束'
+        this.isShow = 1
+      } else {
+        this.SecStatus = '距离开始'
+        this.endtime = endtime
+        this.isShow = 2
+      }
       const a = window.event.target.nodeName
       if (a === 'LI') {
         const children = window.event.target.parentNode.childNodes
-        for (let i = 0; i < children.length; i++) {
+        const length = children.length
+        for (let i = 0; i < length; i++) {
           children[i].style.backgroundColor = '#ffffff'
+          children[i].childNodes[0].childNodes[0].style.color = '#020202'
+          children[i].childNodes[0].childNodes[0].style.fontWeight = 'normal'
+          children[i].childNodes[0].childNodes[1].style.color = '#020202'
         }
         window.event.target.style.backgroundColor = '#d4282d'
-        window.event.target.style.color = '#2f20ff'
+        window.event.target.childNodes[0].childNodes[0].style.color = '#ffffff'
+        window.event.target.childNodes[0].childNodes[0].style.fontWeight = 'bold'
+        window.event.target.childNodes[0].childNodes[1].style.color = '#ffffff'
       } else {
+        const children = window.event.target.parentNode.parentNode.parentNode.childNodes
+        const length = children.length
+        for (let i = 0; i < length; i++) {
+          children[i].style.backgroundColor = '#ffffff'
+          children[i].childNodes[0].childNodes[0].style.color = '#020202'
+          children[i].childNodes[0].childNodes[0].style.fontWeight = 'normal'
+          children[i].childNodes[0].childNodes[1].style.color = '#020202'
+        }
         window.event.target.parentNode.parentNode.style.backgroundColor = '#d4282d'
+        window.event.target.parentNode.childNodes[0].style.color = '#ffffff'
+        window.event.target.parentNode.childNodes[0].style.fontWeight = 'bold'
+        window.event.target.parentNode.childNodes[1].style.color = '#ffffff'
       }
     }
   }
@@ -209,6 +261,26 @@ export default {
           display: flex;
           justify-content: center;
           align-items: center;
+          .imgBox {
+            position: relative;
+            .coverContent {
+              font-size: 18px;
+              color: #ffffff;
+              line-height: 140px;
+              text-align: center;
+              position: absolute;
+              width: 140px;
+              height: 140px;
+              top: 0;
+              bottom: 0;
+              left: 0;
+              right: 0;
+              display: block;
+              margin: auto;
+              border-radius: 140px;
+              background-color: rgba(0, 0, 0, 0.4);
+            }
+          }
           &:nth-child(1) {
             margin-bottom: 20px;
           }
@@ -271,6 +343,21 @@ export default {
               color: #888888;
               font-size: 14px;
               font-weight: 400;
+            }
+            .over-Time {
+              outline: 0;
+              border: 0;
+              width: 180px;
+              height: 32px;
+              background: #b8b8b8;
+              border-radius: 3px;
+              font-size: 16px;
+              font-weight: 400;
+              line-height: 32px;
+              text-align: center;
+              color: #FFFFFF;
+              margin-top: 29px;
+              cursor: not-allowed;
             }
             .panic-buying {
               outline: 0;

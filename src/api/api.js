@@ -12,6 +12,9 @@ export default {
   getSecondTimeAPI (params) {
     return http.post('/index.php?store_id=1&store_type=6', params)
   },
+  getSeckillHomeAPI (params) {
+    return http.post('/index.php?store_id=1&store_type=6', params)
+  },
   putSomeAPI (params) {
     return http.put('/index.php?store_id=1&store_type=6', params)
   },
