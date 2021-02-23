@@ -1,7 +1,8 @@
 <template>
   <div>
     <home-swiper :banner="sliders"></home-swiper>
-    <div class="couponCenter">
+<!--    领券中心-->
+    <div class="couponCenter" @click="handleClickCouponCenter">
       <img src="https://v3pro.houjiemeishi.com/PC/static/images/home_yhq.png" alt="">
     </div>
     <hot-recommend :list_r="hotRecommendList"></hot-recommend>
@@ -55,6 +56,8 @@ export default {
         this.seconds = res.data.data.seconds
         this.$store.commit('secondTime', this.seconds)
       })
+    },
+    handleClickCouponCenter () {
     }
   }
 }
@@ -65,6 +68,7 @@ export default {
     max-width: 1275px;
     min-width: 780px;
     margin: 0 auto;
+    cursor: pointer;
     img {
       margin-top: 50px;
       width: 100%;

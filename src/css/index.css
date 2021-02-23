@@ -36,3 +36,9 @@
 .ant-pagination-item-active a {
     color: red;
 }
+.ant-modal-body {
+    height: 330px!important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
