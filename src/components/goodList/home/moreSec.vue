@@ -42,7 +42,7 @@
             <div class="imgBox">
               <img :src="item.imgurl" alt="">
               <div class="coverContent" v-if="item.type === 0">已结束</div>
-              <div class="coverContent" v-if="item.type === 2">即将开始</div>
+              <div class="coverContent" v-if="item.type === 2">即将开抢</div>
             </div>
             <div class="list-MsgBox">
               <p>{{item.product_title}}</p>
@@ -155,7 +155,7 @@ export default {
       var curMinute = curDate.getMinutes()
       var curSec = curDate.getSeconds()
       var starttime = curHour * 3600 + curMinute * 60 + curSec
-      this.ramaintime = endtime - starttime - 1.0
+      this.ramaintime = endtime - starttime - 0.5
     },
     outTime () {
       if (this.ramaintime > 0) {
