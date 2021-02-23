@@ -8,13 +8,14 @@ import './assets/styles/border.css'
 import './assets/styles/iconfont.css'
 import 'swiper/dist/css/swiper.css'
 import VueAwesomeSwiper from 'vue-awesome-swiper'
-import { Button, Icon, Tabs, Progress, Pagination } from 'ant-design-vue'
+import { Button, Icon, Tabs, Progress, Pagination, Modal } from 'ant-design-vue'
 Vue.use(Icon)
 Vue.use(VueAwesomeSwiper)
 Vue.use(Tabs)
 Vue.use(Button)
 Vue.use(Progress)
 Vue.use(Pagination)
+Vue.use(Modal)
 Vue.config.productionTip = false
 // Vue.prototype.HOST = '/api'
 new Vue({
