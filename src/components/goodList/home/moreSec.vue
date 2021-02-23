@@ -9,12 +9,12 @@
         <div class="top-content-right">
           <h2>{{SecStatus}}</h2>
           <div class="timer">
-            <timer v-if="isShow === 1"></timer>
-            <overtime v-if="isShow === 0"></overtime>
-            <time-one :endTime="starttime" v-if="isShow === 2"></time-one>
-            <time-two :endTime="starttime" v-if="isShow === 3"></time-two>
-            <time-three :endTime="starttime" v-if="isShow === 4"></time-three>
-            <time-four :endTime="starttime" v-if="isShow === 5"></time-four>
+            <timer></timer>
+<!--            <overtime v-if="isShow === 0"></overtime>-->
+<!--            <time-one :endTime="starttime" v-if="isShow === 2"></time-one>-->
+<!--            <time-two :endTime="starttime" v-if="isShow === 3"></time-two>-->
+<!--            <time-three :endTime="starttime" v-if="isShow === 4"></time-three>-->
+<!--            <time-four :endTime="starttime" v-if="isShow === 5"></time-four>-->
           </div>
         </div>
       </div>
@@ -22,7 +22,7 @@
     <div class="container">
       <div class="time-list">
         <ul>
-          <li v-for="item in timeList" :key="item.name" :class="{seconding: item.type === 1}" @click.stop="handleClick(item.type, item.starttime, item.id)">
+          <li v-for="item in timeList" :key="item.name" :class="{seconding: item.type === 1}" @click.stop="handleClick(item.type, item.starttime, item.endtime, item.id)">
             <div>
               <h2>{{item.title}}</h2>
               <p>{{ item.type === 1 ? '抢购中' : item.type === 2 ? '即将开枪' : '已结束' }}</p>
@@ -79,11 +79,11 @@
 
 <script>
 import timer from './timer'
-import overtime from './overtime'
-import TimeOne from './beforetime1'
-import TimeTwo from './beforetime2'
-import TimeThree from './beforetime3'
-import TimeFour from './beforetime4'
+// import overtime from './overtime'
+// import TimeOne from './beforetime1'
+// import TimeTwo from './beforetime2'
+// import TimeThree from './beforetime3'
+// import TimeFour from './beforetime4'
 import api from '../../../api/api'
 // import Event from '../../../assets/js/event'
 export default {
@@ -107,12 +107,12 @@ export default {
     this.getTime()
   },
   components: {
-    timer,
-    overtime,
-    TimeOne,
-    TimeTwo,
-    TimeThree,
-    TimeFour
+    timer
+    // overtime,
+    // TimeOne,
+    // TimeTwo,
+    // TimeThree,
+    // TimeFour
   },
   methods: {
     getTime () {
@@ -133,12 +133,13 @@ export default {
     panicBuying () {
       this.visible = true
     },
-    handleClick (type, starttime, id) {
+    handleClick (type, starttime, endtime, id) {
       this.params.id = id
       this.getTime()
       if (type === 0) {
         this.SecStatus = '已结束'
-        this.isShow = 0
+        this.$store.commit('secondTime', endtime)
+        // alert(this.$store.state.secondTime)
       } else if (type === 1) {
         this.SecStatus = '距离结束'
         this.isShow = 1
