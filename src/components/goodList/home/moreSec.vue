@@ -9,7 +9,13 @@
         <div class="top-content-right">
           <h2>{{SecStatus}}</h2>
           <div class="timer">
-            <timer></timer>
+            <timer :hour="hour"
+                   :minute="minute"
+                   :second="second"
+                   :hourString="hourString"
+                   :minuteString="minuteString"
+                   :secondString="secondString"
+            ></timer>
 <!--            <overtime v-if="isShow === 0"></overtime>-->
 <!--            <time-one :endTime="starttime" v-if="isShow === 2"></time-one>-->
 <!--            <time-two :endTime="starttime" v-if="isShow === 3"></time-two>-->
@@ -97,6 +103,12 @@ export default {
       current: 1,
       isShow: 1,
       starttime: null,
+      endtime: null,
+      hour: '',
+      minute: '',
+      second: '',
+      promiseTimer: '',
+      ramaintime: null,
       SecStatus: '距离结束',
       params: {
         id: null
@@ -105,6 +117,8 @@ export default {
   },
   mounted () {
     this.getTime()
+    this.changeTime(this.$store.state.secondTime.current_time[0].endtime)
+    this.outTime()
   },
   components: {
     timer
@@ -133,28 +147,73 @@ export default {
     panicBuying () {
       this.visible = true
     },
+    changeTime (val) {
+      const endTimeArr = val.split(':')
+      var endtime = parseInt(endTimeArr[0]) * 3600 + parseInt(endTimeArr[1]) * 60 + parseInt(endTimeArr[2])
+      const curDate = new Date()
+      var curHour = curDate.getHours()
+      var curMinute = curDate.getMinutes()
+      var curSec = curDate.getSeconds()
+      var starttime = curHour * 3600 + curMinute * 60 + curSec
+      this.ramaintime = endtime - starttime - 1.0
+    },
+    outTime () {
+      if (this.ramaintime > 0) {
+        this.hour = Math.floor((this.ramaintime / 3600) % 24)
+        this.minute = Math.floor((this.ramaintime / 60) % 60)
+        this.second = Math.floor(this.ramaintime % 60)
+        this.countDowm()
+      }
+    },
+    countDowm () {
+      const self = this
+      clearInterval(this.promiseTimer)
+      this.promiseTimer = setInterval(function () {
+        if (self.hour === 0) {
+          if (self.minute !== 0 && self.second === 0) {
+            self.second = 59
+            self.minute -= 1
+          } else if (self.minute === 0 && self.second === 0) {
+            self.second = 0
+            self.$emit('countDowmEnd', true)
+            clearInterval(self.promiseTimer)
+          } else {
+            self.second -= 1
+          }
+        } else {
+          if (self.minute !== 0 && self.second === 0) {
+            self.second = 59
+            self.minute -= 1
+          } else if (self.minute === 0 && self.second === 0) {
+            self.hour -= 1
+            self.minute = 59
+            self.second = 59
+          } else {
+            self.second -= 1
+          }
+        }
+      }, 1000)
+    },
+    formatNum (num) {
+      return num < 10 ? '0' + num : '' + num
+    },
     handleClick (type, starttime, endtime, id) {
       this.params.id = id
       this.getTime()
       if (type === 0) {
         this.SecStatus = '已结束'
-        this.$store.commit('secondTime', endtime)
-        // alert(this.$store.state.secondTime)
+        this.hour = 0
+        this.minute = 0
+        this.second = 0
       } else if (type === 1) {
         this.SecStatus = '距离结束'
-        this.isShow = 1
+        const currentTime = this.$store.state.secondTime.current_time[0].endtime
+        this.changeTime(currentTime)
+        this.outTime()
       } else {
         this.SecStatus = '距离开始'
-        this.starttime = starttime
-        if (id === '32') {
-          this.isShow = 2
-        } else if (id === '33') {
-          this.isShow = 3
-        } else if (id === '34') {
-          this.isShow = 4
-        } else if (id === '35') {
-          this.isShow = 5
-        }
+        this.changeTime(starttime)
+        this.outTime()
       }
       const a = window.event.target.nodeName
       if (a === 'LI') {
@@ -184,6 +243,17 @@ export default {
         window.event.target.parentNode.childNodes[0].style.fontWeight = 'bold'
         window.event.target.parentNode.childNodes[1].style.color = '#ffffff'
       }
+    }
+  },
+  computed: {
+    hourString () {
+      return this.formatNum(this.hour).split('') // 此处不能用es6 的 [...new Set(str)] ,会被去重
+    },
+    minuteString () {
+      return this.formatNum(this.minute).split('') // 此处不能用es6 的 [...new Set(str)] ,会被去重
+    },
+    secondString () {
+      return this.formatNum(this.second).split('') // 此处不能用es6 的 [...new Set(str)] ,会被去重
     }
   }
 }

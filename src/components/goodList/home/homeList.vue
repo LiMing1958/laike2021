@@ -1,15 +1,15 @@
 <template>
   <div>
-    <home-swiper :banner="sliders"></home-swiper>
+      <home-swiper :banner="sliders"></home-swiper>
 <!--    领券中心-->
-    <div class="couponCenter" @click="handleClickCouponCenter">
-      <img src="https://v3pro.houjiemeishi.com/PC/static/images/home_yhq.png" alt="">
-    </div>
-    <hot-recommend :list_r="hotRecommendList"></hot-recommend>
-    <div class="newProduct">
-      <newProduct :list_x="newProduct"></newProduct>
-    </div>
-    <seconds :seconds="seconds"></seconds>
+      <div class="couponCenter" @click="handleClickCouponCenter">
+       <img src="https://v3pro.houjiemeishi.com/PC/static/images/home_yhq.png" alt="">
+      </div>
+     <hot-recommend :list_r="hotRecommendList"></hot-recommend>
+     <div class="newProduct">
+       <newProduct :list_x="newProduct"></newProduct>
+      </div>
+      <seconds :seconds="seconds"></seconds>
   </div>
 </template>
 
@@ -18,7 +18,7 @@ import HomeSwiper from '../swiper/swiperNew'
 import HotRecommend from '../hotRecommend/hotRecommend'
 import newProduct from '../hotNewProduct/newproduct'
 import seconds from '../seconds/seconds'
-import api from '../../../api/api'
+import api from '@/api/api'
 export default {
   name: 'goodList',
   props: ['itemId'],
@@ -58,6 +58,7 @@ export default {
       })
     },
     handleClickCouponCenter () {
+      this.$store.commit('toCouponCenter', 'CouponCenter')
     }
   }
 }

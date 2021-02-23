@@ -12,7 +12,7 @@ export default {
   getSecondTimeAPI (params) {
     return http.post('/index.php?store_id=1&store_type=6', params)
   },
-  getSeckillHomeAPI (params) {
+  getCouponCenter (params) {
     return http.post('/index.php?store_id=1&store_type=6', params)
   },
   putSomeAPI (params) {
