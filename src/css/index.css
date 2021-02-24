@@ -23,10 +23,11 @@
 .ant-progress-bg {
     height: 12px!important;
     border-radius: 0px!important;
-    background-color: #ffc3fe;
+    background-color: rgb(255, 229, 229);
 }
 .ant-progress-inner {
-    background-color: #FFE5E5;
+    border: 1px solid #F2CECD;
+    background-color: transparent;
 }
 .ant-pagination-item-active {
     font-weight: 500;
