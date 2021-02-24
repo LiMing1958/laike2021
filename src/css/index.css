@@ -43,3 +43,13 @@
     align-items: center;
     justify-content: center;
 }
+.ant-progress-status-success .ant-progress-bg {
+    background-color: #ff3222;
+    border: 1px solid #ff3222;
+}
+.ant-progress-status-success .ant-progress-inner {
+    border: none;
+}
+.ant-progress-status-success .ant-progress-text {
+     color: #ff3222;
+}

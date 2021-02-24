@@ -32,7 +32,7 @@
                   <span class="name-title" style="color: #020202;">{{item.name}}</span>
                 </p>
                 <p :class="{progress: item.discount > 0}">
-                  <span>已抢</span>
+                  <span>{{item.num === '0' ? '已抢光' : '已抢'}}</span>
                   <span>
                       <a-progress :percent="item.num > 0 ? parseFloat(((item.circulation - item.num) * 100 / item.circulation).toFixed(2)) : 100"/>
                    </span>
