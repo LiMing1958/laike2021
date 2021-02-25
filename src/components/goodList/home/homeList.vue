@@ -45,7 +45,7 @@ export default {
         module: 'app_pc',
         action: 'index',
         m: 'home',
-        access_id: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2MTIyNjU5NjEsImV4cCI6MTYxMjMwOTE2MSwianRpIjoiMWUwYjcwMjMxZjJiNjJlYjg5ZGI4ZjFkNDllODYyZDEifQ.ggO9qA_Cm7sT9wqg_aHjIyyqFx--3btCrc_0Ssn3mpo',
+        access_id: JSON.parse(localStorage.getItem('pc_user')).access_id,
         cid: null
       }
       api.gethotRecommendAPI(params).then((res) => {
@@ -58,6 +58,7 @@ export default {
       })
     },
     handleClickCouponCenter () {
+      // location.search = '?module=coupon&action=coupon'
       this.$store.commit('toCouponCenter', 'CouponCenter')
     }
   }

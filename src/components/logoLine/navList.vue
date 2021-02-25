@@ -43,7 +43,7 @@ export default {
         module: 'app_pc',
         action: 'index',
         m: 'index',
-        access_id: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2MTIyNjU5NjEsImV4cCI6MTYxMjMwOTE2MSwianRpIjoiMWUwYjcwMjMxZjJiNjJlYjg5ZGI4ZjFkNDllODYyZDEifQ.ggO9qA_Cm7sT9wqg_aHjIyyqFx--3btCrc_0Ssn3mpo'
+        access_id: JSON.parse(localStorage.getItem('pc_user')).access_id
       }
       api.postFormAPI(params).then(res => {
         if (res.status === 200) {

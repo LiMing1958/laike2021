@@ -77,6 +77,7 @@ export default {
     margin-right: 9px;
     margin-bottom: 12px;
     background-color: #fff;
+    cursor: pointer;
   }
   li:nth-child(1) {
     width: 432px;

@@ -44,6 +44,9 @@
             </div>
           </div>
       </div>
+      <div class="Pagination">
+        <a-pagination v-model="current" :total="total" show-less-items />
+      </div>
     </div>
 </template>
 
@@ -54,22 +57,25 @@ export default {
   data () {
     return {
       list: null,
+      total: null,
+      current: 1,
       params: {
         module: 'app_pc',
         action: 'coupon',
         m: 'index',
-        access_id: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2MTIzMzc0MTAsImV4cCI6MTYxMjM4MDYxMCwianRpIjoiY2NjZDg2MmIxY2QzZDEyM2NiY2RkMGY0MDI2NWQ5NTQifQ.Okmp89OJPGtfjPGntbnEnhvCPe10OWT-PFhLyPkN31I',
+        access_id: JSON.parse(localStorage.getItem('pc_user')).access_id,
         page: 1
       }
     }
   },
-  created () {
+  mounted () {
     this.getCouponCenter()
   },
   methods: {
     getCouponCenter () {
       api.getCouponCenter(this.params).then(res => {
         this.list = res.data.data.list
+        this.total = parseInt(res.data.data.total)
         console.log(res)
       })
     }
@@ -267,6 +273,11 @@ export default {
         }
       }
     }
+  }
+  .Pagination {
+    width: 100%;
+    text-align: center;
+    margin-top: 44px;
   }
 }
 </style>

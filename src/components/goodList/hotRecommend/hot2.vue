@@ -1,7 +1,7 @@
 <template>
   <div class="box">
     <dl v-for="item in hotList" :key="item.id">
-      <dt>
+      <dt @click="handleClick(item)">
         <img :src="item.imgurl" alt="">
         <div class="coverContent" v-if="item.status === '3'">
           已下架
@@ -26,6 +26,12 @@ export default {
   data () {
     return {
     }
+  },
+  methods: {
+    handleClick (item) {
+      // location.search = '?module=homedetail&action=homedetail&id=' + item.id + '&ClassName=1'
+      console.log(item)
+    }
   }
 }
 </script>
@@ -48,6 +54,7 @@ export default {
     /*这里父元素必须清楚浮动，不然会布局塌陷*/
     float: left;
     margin: 8px 18.5px;
+    cursor: pointer;
     &:hover {
       box-shadow: rgb(228, 228, 228) 0px 0px 5px 2px;
       dd {

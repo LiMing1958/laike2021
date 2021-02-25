@@ -5,6 +5,10 @@ import Home from '../views/Home.vue'
 Vue.use(VueRouter)
 
 const routes = [
+  // {
+  //   path: '/',
+  //   redirect: '/PC/index.html'
+  // },
   {
     path: '/',
     name: 'Home',

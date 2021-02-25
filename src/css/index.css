@@ -53,3 +53,6 @@
 .ant-progress-status-success .ant-progress-text {
      color: #ff3222;
 }
+.ant-modal-root {
+    position: absolute!important;
+}

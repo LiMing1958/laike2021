@@ -2,7 +2,7 @@
   <div class="header">
     <div class="main">
       <div class="header-left">
-        <span>来客推商城欢迎您</span>
+        <span @click="toHome">来客推商城欢迎您</span>
       </div>
       <div class="header-right">
         <span>【登录】</span>
@@ -34,6 +34,11 @@ export default {
   name: 'headList',
   props: {
     msg: String
+  },
+  methods: {
+    toHome () {
+      this.$store.commit('toHome', 'HomeList')
+    }
   }
 }
 </script>
