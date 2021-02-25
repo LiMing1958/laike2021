@@ -1,9 +1,9 @@
 <template>
     <div class="goodList">
       <transition>
-        <keep-alive>
+<!--        <keep-alive>-->
           <component :is="$store.state.showPage"></component>
-        </keep-alive>
+<!--        </keep-alive>-->
       </transition>
     </div>
 </template>

@@ -79,13 +79,14 @@ export default {
   /*}*/
 .box {
   height: 288px;
+  min-width: 1300px;
   width: 100%;
   background-color: #333333;
   margin-top: 168px;
   /*position: fixed;*/
   /*bottom: 0;*/
   div:nth-child(1) {
-    width: 100vw;
+    width: 100%;
     height: 213px;
     box-sizing: border-box;
     display: flex;
