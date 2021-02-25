@@ -45,7 +45,7 @@ export default {
         module: 'app_pc',
         action: 'index',
         m: 'home',
-        access_id: JSON.parse(localStorage.getItem('pc_user')).access_id,
+        access_id: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2MTIzMzc0MTAsImV4cCI6MTYxMjM4MDYxMCwianRpIjoiY2NjZDg2MmIxY2QzZDEyM2NiY2RkMGY0MDI2NWQ5NTQifQ.Okmp89OJPGtfjPGntbnEnhvCPe10OWT-PFhLyPkN31I',
         cid: null
       }
       api.gethotRecommendAPI(params).then((res) => {

@@ -5,10 +5,10 @@ const service = axios.create({
   timeout: 3 * 1000
 })
 service.interceptors.request.use(config => {
-  const pcuser = {
-    access_id: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2MTIzMzc0MTAsImV4cCI6MTYxMjM4MDYxMCwianRpIjoiY2NjZDg2MmIxY2QzZDEyM2NiY2RkMGY0MDI2NWQ5NTQifQ.Okmp89OJPGtfjPGntbnEnhvCPe10OWT-PFhLyPkN31I'
-  }
-  localStorage.setItem('pc_user', JSON.stringify(pcuser))
+  // const user = {
+  //   access_id: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2MTIzMzc0MTAsImV4cCI6MTYxMjM4MDYxMCwianRpIjoiY2NjZDg2MmIxY2QzZDEyM2NiY2RkMGY0MDI2NWQ5NTQifQ.Okmp89OJPGtfjPGntbnEnhvCPe10OWT-PFhLyPkN31I'
+  // }
+  // localStorage.setItem('pc_user', JSON.stringify(user))
   // location.pathname = '/PC/index.html'
   // config.data = JSON.stringify(config.data)
   // 后台需要formData格式，所以需要用qs插件转换格式
