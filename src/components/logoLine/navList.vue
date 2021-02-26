@@ -79,7 +79,7 @@ export default {
     margin-top: 35px;
     .tabContain {
       width: 100%!important;
-      min-height: calc( 100vh - 680px );
+      min-height: calc( 100vh - 580px );
       padding: -20px 0px 0px 0px!important;
     }
     /*.tab-p {*/
