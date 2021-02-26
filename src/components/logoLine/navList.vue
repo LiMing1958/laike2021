@@ -1,6 +1,6 @@
 <template>
   <div class="navList">
-    <a-tabs default-active-key="1">
+    <a-tabs default-active-key="1" v-model = "$store.state.activeKey" @change="callback">
       <a-tab-pane v-for = "item in navList" :key="item.id">
         <div slot="tab" @click="toHome">
           <p>
@@ -38,6 +38,9 @@ export default {
     this.getNavList()
   },
   methods: {
+    callback () {
+      console.log(this.activeKey)
+    },
     getNavList () {
       const params = {
         module: 'app_pc',
@@ -76,7 +79,7 @@ export default {
     margin-top: 35px;
     .tabContain {
       width: 100%!important;
-      min-height: calc( 100vh - 680px );
+      min-height: calc( 100vh - 580px );
       padding: -20px 0px 0px 0px!important;
     }
     /*.tab-p {*/

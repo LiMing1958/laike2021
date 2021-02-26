@@ -73,7 +73,6 @@ export default {
   props: ['secondsList'],
   data () {
     return {
-      scroll_Top: null,
       visible: false,
       showPage: 'HomeList'
     }
@@ -102,6 +101,11 @@ export default {
       this.visible = !this.visible
     },
     handleSetBodyStyle () {
+      const y = window.scrollY
+      console.log(y)
+      // setTimeout(() => {
+      //   window.scrollTo(0, y)
+      // }, 300)
     },
     moreSec () {
       console.log(this.secondsList)

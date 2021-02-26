@@ -12,6 +12,7 @@
 import HomeList from './home/homeList'
 import MoreSec from './home/moreSec'
 import CouponCenter from './home/couponcenter'
+import ProductDetails from '@/components/goodList/productdetails/productdetails'
 export default {
   name: 'goodList',
   props: ['itemId'],
@@ -26,7 +27,8 @@ export default {
   components: {
     HomeList,
     MoreSec,
-    CouponCenter
+    CouponCenter,
+    ProductDetails
   }
 }
 </script>

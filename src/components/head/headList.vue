@@ -38,6 +38,7 @@ export default {
   methods: {
     toHome () {
       this.$store.commit('toHome', 'HomeList')
+      this.$store.commit('setActiveKey', 0)
     }
   }
 }

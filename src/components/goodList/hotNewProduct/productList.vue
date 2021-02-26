@@ -1,7 +1,7 @@
 <template>
   <div class="productList">
     <ul>
-      <li v-for="item in list_x" :key="item.id">
+      <li v-for="item in list_x" :key="item.id" @click="handleClick(item)">
           <div class="imgContent">
             <img :src="item.imgurl" alt="">
             <div class="coverContent" v-if="item.status === '3'">
@@ -27,6 +27,12 @@ export default {
   props: ['list_x'],
   data () {
     return {}
+  },
+  methods: {
+    handleClick (item) {
+      this.$store.commit('toProductDetailsPage', 'ProductDetails')
+      this.$store.commit('sendProductDetails', { products: item, title: '新品热卖' })
+    }
   }
 }
 </script>

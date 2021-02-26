@@ -29,6 +29,8 @@ export default {
   },
   methods: {
     handleClick (item) {
+      this.$store.commit('toProductDetailsPage', 'ProductDetails')
+      this.$store.commit('sendProductDetails', { products: item, title: '热销推荐' })
       // location.search = '?module=homedetail&action=homedetail&id=' + item.id + '&ClassName=1'
       console.log(item)
     }

@@ -56,4 +56,9 @@
 .ant-modal-root {
     position: absolute!important;
 }
+body{
+    overflow-x: hidden;
+    /*overflow-y: scroll;*/
+    height: 100%;
+}
 
