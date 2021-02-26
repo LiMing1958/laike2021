@@ -6,7 +6,7 @@
             <span class="breadcrumb-link">首页</span>
           </a-breadcrumb-item>
           <span slot="separator">
-            <a-icon style="color: #acacac" type="right" />
+            <a-icon style="color: #acacac;font-size: 12px" type="right" />
           </span>
           <a-breadcrumb-item>领券中心</a-breadcrumb-item>
         </a-breadcrumb>

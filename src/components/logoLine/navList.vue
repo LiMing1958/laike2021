@@ -1,6 +1,6 @@
 <template>
   <div class="navList">
-    <a-tabs default-active-key="1">
+    <a-tabs default-active-key="1" v-model = "$store.state.activeKey" @change="callback">
       <a-tab-pane v-for = "item in navList" :key="item.id">
         <div slot="tab" @click="toHome">
           <p>
@@ -38,6 +38,9 @@ export default {
     this.getNavList()
   },
   methods: {
+    callback () {
+      console.log(this.activeKey)
+    },
     getNavList () {
       const params = {
         module: 'app_pc',

@@ -100,13 +100,6 @@ export default {
     handleSecClick () {
       this.visible = !this.visible
     },
-    handleSetBodyStyle () {
-      const y = window.scrollY
-      console.log(y)
-      // setTimeout(() => {
-      //   window.scrollTo(0, y)
-      // }, 300)
-    },
     moreSec () {
       console.log(this.secondsList)
       this.showPage = 'MoreSec'
