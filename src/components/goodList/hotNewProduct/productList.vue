@@ -32,6 +32,7 @@ export default {
     handleClick (item) {
       this.$store.commit('toProductDetailsPage', 'ProductDetails')
       this.$store.commit('sendProductDetails', { products: item, title: '新品热卖' })
+      console.log(item)
     }
   }
 }

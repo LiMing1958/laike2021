@@ -3,5 +3,6 @@ export default {
   secondTime: null,
   endtime: null,
   activeKey: 0,
-  products: null
+  products: null,
+  cartList: null
 }
