@@ -51,6 +51,8 @@ export default {
       api.postFormAPI(params).then(res => {
         if (res.status === 200) {
           // 数据处理
+          const cartList = res.data.data.class_list
+          this.$store.commit('getCartList', cartList)
           const title_ = {
             cid: '2',
             english_name: 'HOME',

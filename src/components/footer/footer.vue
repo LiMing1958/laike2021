@@ -82,7 +82,7 @@ export default {
   min-width: 1300px;
   width: 100%;
   background-color: #333333;
-  margin-top: 68px;
+  margin-top: 69px;
   /*position: fixed;*/
   /*bottom: 0;*/
   div:nth-child(1) {

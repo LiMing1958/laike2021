@@ -20,5 +20,8 @@ export default {
   },
   setActiveKey (state, key) {
     state.activeKey = key
+  },
+  getCartList (state, cartList) {
+    state.cartList = cartList
   }
 }

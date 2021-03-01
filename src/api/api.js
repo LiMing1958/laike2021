@@ -1,7 +1,16 @@
 import http from '../utils/http'
 export default {
+  deleteSearchHistory (params) {
+    return http.get('/index.php?store_id=1&store_type=6', params)
+  },
+  getSearchProducts (params) {
+    return http.get('/index.php?store_id=1&store_type=6', params)
+  },
   getListAPI (params) {
     return http.get('/index.php?store_id=1&store_type=6', params)
+  },
+  getSearchList (params) {
+    return http.post('/index.php?store_id=1&store_type=6', params)
   },
   postFormAPI (params) {
     return http.post('/index.php?store_id=1&store_type=6', params)
