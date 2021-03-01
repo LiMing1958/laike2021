@@ -3,6 +3,9 @@ export default {
   deleteSearchHistory (params) {
     return http.get('/index.php?store_id=1&store_type=6', params)
   },
+  getProductsDetail (params) {
+    return http.get('/index.php?store_id=1&store_type=6', params)
+  },
   getSearchProducts (params) {
     return http.get('/index.php?store_id=1&store_type=6', params)
   },

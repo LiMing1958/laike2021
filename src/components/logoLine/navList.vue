@@ -49,9 +49,10 @@ export default {
         access_id: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2MTIzMzc0MTAsImV4cCI6MTYxMjM4MDYxMCwianRpIjoiY2NjZDg2MmIxY2QzZDEyM2NiY2RkMGY0MDI2NWQ5NTQifQ.Okmp89OJPGtfjPGntbnEnhvCPe10OWT-PFhLyPkN31I'
       }
       api.postFormAPI(params).then(res => {
+        console.log(res.data.data.cart_num)
         if (res.status === 200) {
           // 数据处理
-          const cartList = res.data.data.class_list
+          const cartList = res.data.data
           this.$store.commit('getCartList', cartList)
           const title_ = {
             cid: '2',
@@ -64,6 +65,7 @@ export default {
             listData[i].id = i
           }
           this.navList = listData
+          // console.log(this.navList)
         }
       }).catch(err => console.log(err))
     },

@@ -34,7 +34,7 @@
           </div>
         </div>
         <div class="car-footer">
-          <p>共 <span style="color: #d4282d">{{ $store.state.cartList.cart_num ? $store.state.cartList.cart_num : '4'}}</span> 件商品    合计： <span style="color: #d4282d">{{ $store.state.cartList.cart_price ? '￥' +  $store.state.cartList.cart_price :'￥796'}}</span></p>
+          <p>共 <span style="color: #d4282d">{{ $store.state.cartList.cart_num > 0 ? $store.state.cartList.cart_num : '4'}}</span> 件商品    合计： <span style="color: #d4282d">{{ $store.state.cartList.cart_price ? '￥' +  $store.state.cartList.cart_price :'￥796'}}</span></p>
           <button>去购物车</button>
         </div>
       </div>
@@ -133,7 +133,7 @@ export default {
         access_id: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2MTIyNjU5NjEsImV4cCI6MTYxMjMwOTE2MSwianRpIjoiMWUwYjcwMjMxZjJiNjJlYjg5ZGI4ZjFkNDllODYyZDEifQ.ggO9qA_Cm7sT9wqg_aHjIyyqFx--3btCrc_0Ssn3mpo'
       }
       api.getSearchList(params).then(res => {
-        console.log(res.data.data)
+        // console.log(res.data.data)
         this.cartSearchList = res.data.data
       })
     }
