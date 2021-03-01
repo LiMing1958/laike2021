@@ -52,7 +52,35 @@
           </div>
           <div class="quantity">
             <span>数量</span>
-            <span></span>
+            <div class="quantity-btn">
+              <span class="decrease" @click.stop="decrease" ref="decreasecount"><a-icon type="minus" /></span>
+              <input type="text" v-model="num" ref="inputTag">
+              <span class="add" @click.stop="addCount" ref="addcount"><a-icon type="plus" /></span>
+            </div>
+          </div>
+          <div class="hr"></div>
+          <div class="end">
+            <a-button type="danger" class="addToCart">
+              加入购物车
+            </a-button>
+            <a-button class="buyNow" type="danger" ghost>
+              立即购买
+            </a-button>
+            <span class="Favorites">
+              <div>
+                <p><a-icon type="star" /></p>
+                <p>收藏</p>
+              </div>
+            </span>
+          </div>
+          <div class="shareBox">
+            <span>分享</span>
+            <span>
+              <a-icon type="wechat" />
+            </span>
+            <span>
+              <a-icon type="chrome" />
+            </span>
           </div>
         </div>
       </div>
@@ -73,13 +101,39 @@ export default {
       proImgArr: null,
       isClickItem: false,
       ClickIndex: null,
-      isDefault: true
+      isDefault: true,
+      num: 1,
+      count: null
     }
   },
   mounted () {
     this.getProductsDetail()
   },
   methods: {
+    addCount () {
+      if (this.num < this.count) {
+        this.num++
+        this.$refs.inputTag.value = this.num
+        if (this.num === this.count) {
+          this.$refs.addcount.style.cursor = 'not-allowed'
+        }
+        if (this.num > 0) {
+          this.$refs.decreasecount.style.cursor = 'pointer'
+        }
+      }
+    },
+    decrease () {
+      if (this.num > 0) {
+        this.num--
+        this.$refs.inputTag.value = this.num
+        if (this.num === 0) {
+          this.$refs.decreasecount.style.cursor = 'not-allowed'
+        }
+        if (this.num < this.count) {
+          this.$refs.addcount.style.cursor = 'pointer'
+        }
+      }
+    },
     leftClick () {
       this.currentIndex--
       if (this.currentIndex >= 0) {
@@ -151,6 +205,7 @@ export default {
         const imgData = res.data.data.skuBeanList
         this.skuBeanList = imgData
         this.largeImg = imgData[0].imgurl
+        this.count = parseInt(imgData[0].count)
         this.proImgArr = res.data.data.pro.img_arr
       })
     },
@@ -197,7 +252,7 @@ export default {
         .large-img {
           width: 100% ;
           height: 478px;
-          background-color: #ff4a45;
+          /*background-color: #ff4a45;*/
           img {
             width: 100%;
             height: 100%;
@@ -213,7 +268,7 @@ export default {
             width: 76px;
             height: 76px;
             margin-right: 13.3px;
-            background-color: #b8ff63;
+            /*background-color: #b8ff63;*/
             float: left;
             cursor: pointer;
             img {
@@ -232,7 +287,7 @@ export default {
             left: 15px;
             width: calc(100% - 30px);
             height: 100%;
-            background-color: #ffc896;
+            /*background-color: #ffc896;*/
             overflow: hidden;
           }
           .icon-right {
@@ -326,7 +381,8 @@ export default {
           }
           .color-item {
             display: inline-block;
-            width: 56px;
+            min-width: 56px;
+            padding: 0 10px;
             height: 32px;
             margin-right: 10px;
             border: 1px solid #DCDFE6;
@@ -341,8 +397,144 @@ export default {
         .quantity {
           width: 100%;
           height: 50px;
-          line-height: 50px;
+          display: flex;
+          align-items: center;
+          /*line-height: 50px;*/
           /*background-color: #42ffba;*/
+          .quantity-btn {
+            margin-left: 56px;
+            /*margin-top: 20px;*/
+            display: inline-block;
+            border-radius: 4px;
+            width: 130px;
+            height: 32px;
+            border: 1px solid #DCDFE6;
+            input {
+              height: 100%;
+              width: calc(100% - 66px);
+              text-align: center;
+              background-color: transparent;
+              border-left: 1px solid #DCDFE6;
+              border-right: 1px solid #DCDFE6;
+            }
+            .decrease {
+              cursor: pointer;
+              display: inline-block;
+              float: left;
+              width: 33px;
+              font-size: 12px;
+              height: 100%;
+              color: #9c9c9c;
+              font-family: Andalus;
+              font-weight: normal;
+              line-height: 32px;
+              text-align: center;
+            }
+            .add {
+              cursor: pointer;
+              display: inline-block;
+              float: right;
+              width: 33px;
+              height: 100%;
+              font-size: 14px;
+              color: #9c9c9c;
+              font-family: Andalus;
+              line-height: 30px;
+              text-align: center;
+            }
+          }
+        }
+        .hr {
+          width: 100%;
+          height: 1px;
+          margin-top: 30px;
+          background-color: #e4e4e4;
+        }
+        .end {
+          width: 100%;
+          height: 50px;
+          margin-top: 28px;
+          /*background-color: #ff9166;*/
+          .Favorites {
+            float: right;
+            margin-right: 320px;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #DDDDDD;
+            font-size: 14px;
+            color: #888888;
+            text-align: center;
+            box-sizing: border-box;
+            cursor: pointer;
+            &:hover {
+              background-color: #D4282D;
+              color: white;
+            }
+            p {
+              font-size: 14px;
+            }
+          }
+          .buyNow {
+            height: 100%;
+            width: 168px;
+            font-weight: bold;
+            margin-left: 12px;
+          }
+          .addToCart {
+            height: 100%;
+            width: 168px;
+            font-weight: bold;
+            background-color: #D4282D;
+            border: none;
+          }
+          .addToCart:hover {
+            background-color: rgba(255, 20, 42, 0.64) !important;
+          }
+        }
+        .shareBox {
+          position: absolute;
+          display: flex;
+          bottom: 0;
+          color: #878787;
+          align-items: center;
+          padding-top: 10px;
+          margin-top: auto;
+          span:nth-child(2) {
+            display: inline-block;
+            background-color: #acacac;
+            text-align: center;
+            line-height: 19px;
+            width: 18px;
+            height: 18px;
+            color: white;
+            font-size: 12px;
+            border-radius: 18px;
+            margin-left: 60px;
+            cursor: pointer;
+            &:hover {
+              background-color: #1cb637;
+            }
+          }
+          span:nth-child(3) {
+            display: inline-block;
+            background-color: #acacac;
+            text-align: center;
+            padding-right: 0.5px;
+            line-height: 18px;
+            width: 18px;
+            height: 18px;
+            color: white;
+            font-size: 12px;
+            border-radius: 18px;
+            margin-left: 15px;
+            cursor: pointer;
+            &:hover {
+              background-color: #1cb637;
+            }
+          }
         }
       }
     }
