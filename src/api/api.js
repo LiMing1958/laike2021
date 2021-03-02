@@ -12,6 +12,9 @@ export default {
   getListAPI (params) {
     return http.get('/index.php?store_id=1&store_type=6', params)
   },
+  getCoupon (params) {
+    return http.post('/index.php?store_id=1&store_type=6', params)
+  },
   getSearchList (params) {
     return http.post('/index.php?store_id=1&store_type=6', params)
   },

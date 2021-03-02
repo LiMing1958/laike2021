@@ -45,10 +45,83 @@
               <span>价格</span>
               <span>￥{{pro.price + '.00'}}</span>
             </p>
+            <p>
+              <a-modal v-model="visible"
+                       :footer="null"
+                       width="420px"
+                       title="领券"
+                       :centered=true
+                       destroyOnClose="true">
+                <div v-for="item in couponList" :key="item.id" style="
+                          width: 80%;
+                          height: 151px;
+                          text-align: center;
+                          margin: 0 auto;
+                          overflow: hidden;
+                          position: relative;
+                          box-shadow: #e7e7e7 1px 1px 8px 1px;
+                     ">
+                    <div style="position: absolute;left: 242px;top: -11px;width: 20px;height: 20px;border-radius: 20px;background-color: #e6e6e6;"></div>
+                    <div style="position: absolute;left: 242px;top: 142px;width: 20px;height: 20px;border-radius: 20px;background-color: #e6e6e6;"></div>
+                    <div style="width: 253px;
+                                height: 100%;
+                                padding: 20px 26px;
+                                text-align: left;
+                                border-right: 1px dashed #cdcdcd;
+                                float: left">
+                      <p style="width: 100%;
+                                height: 28px;
+                                display: flex;
+                                align-items: flex-end;
+                                font-size: 18px;
+                                line-height: 18px;
+                                color: #D4282D;">
+                        <span style="font-weight: bold;
+                                    font-size: 34px;
+                                    color: #d4282d;
+                                    line-height: 28px;">
+                          {{parseInt(item.discount)}}
+                        </span>
+                        折
+                        <span style="padding: 4px 5px;
+                                    background-color: #FEEDED;
+                                    color: #D4282D;
+                                    font-size: 12px;
+                                    line-height: 12px;
+                                    margin-left: 8px;">
+                          {{item.limit}}
+                        </span>
+                      </p>
+                      <p style="color: black;margin-top: 15px;">{{item.coupon_name}}</p>
+                      <p style="color: #999999;margin-top: 15px;">{{'有效期 ' + item.start_time + '-' + item.end_time}}</p>
+                    </div>
+                    <div style="width: 44px;
+                                height: 100%;
+                                float: right;
+                                color: #D4282D;
+                                font-weight: bold;
+                                cursor: pointer;
+                                display: flex;
+                                padding: 0 10px;
+                                align-items: center;
+                                justify-content: center;
+                    ">
+                      立即领取
+                    </div>
+                </div>
+              </a-modal>
+              <span class="get-coupon" v-if="couponStr">领券</span>
+              <span v-if="couponStr" class="coupon-str-box" @click="getCoupon">
+                <span class="coupon-str">{{couponStr}}</span>
+                <img src="https://v3pro.houjiemeishi.com/PC/static/images/lq_bg.png" alt="">
+              </span>
+            </p>
           </div>
-          <div class="color-list">
-            <span>颜色</span>
-            <span class="color-item" :class="{ colorItemDefault: index === 0 && isDefault}" v-for="(item, index) in skuBeanList" :key="item.cid" @click="handleClickColor(item)">{{item.name}}</span>
+          <div class="attrList-list" v-for="item in attrList" :key="item.id">
+            <span class="attrName">{{item.attrName}}</span>
+            <span class="attrList">
+              <span class="color-item" :class="{ colorItemDefault: index === 0 && isDefault}" v-for="(items, index) in item.all" :key="index" @click="handleClickColor(items,item)">{{items}}</span>
+            </span>
           </div>
           <div class="quantity">
             <span>数量</span>
@@ -81,8 +154,7 @@
             <span>
               <a-icon type="chrome" />
             </span>
-          </div>
-        </div>
+          </div>       </div>
       </div>
     </div>
   </div>
@@ -94,16 +166,20 @@ export default {
   name: 'productdetails',
   data () {
     return {
+      visible: false,
       largeImg: null,
       pro: null,
       skuBeanList: null,
+      attrList: null,
       currentIndex: -1,
       proImgArr: null,
       isClickItem: false,
       ClickIndex: null,
       isDefault: true,
       num: 1,
-      count: null
+      count: null,
+      couponStr: null,
+      couponList: null
     }
   },
   mounted () {
@@ -171,8 +247,15 @@ export default {
       })
       liArr[this.currentIndex].style.border = '2px solid red'
     },
-    handleClickColor (item) {
-      this.largeImg = item.imgurl
+    handleClickColor (item, itemPa) {
+      console.log(itemPa)
+      const skuBeanList = this.skuBeanList
+      const clickItem = skuBeanList.find((items) => {
+        return items.name.includes(item)
+      })
+      if (itemPa.attrName !== '尺码') {
+        this.largeImg = clickItem.imgurl
+      }
       const target = window.event.currentTarget
       const siblingElements = target.parentNode.childNodes
       siblingElements.forEach(item => {
@@ -201,12 +284,31 @@ export default {
       }
       api.getProductsDetail(params).then(res => {
         this.pro = res.data.data.pro
+        this.attrList = res.data.data.attrList
         console.log(res.data.data)
         const imgData = res.data.data.skuBeanList
         this.skuBeanList = imgData
         this.largeImg = imgData[0].imgurl
         this.count = parseInt(imgData[0].count)
+        this.couponStr = parseInt(res.data.data.coupon_str[0])
         this.proImgArr = res.data.data.pro.img_arr
+      })
+    },
+    getCoupon () {
+      // console.log(this.$store.state.products.products.id)
+      const params = {
+        module: 'app_pc',
+        action: 'coupon',
+        m: 'pro_coupon',
+        access_id: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2MTIzMzc0MTAsImV4cCI6MTYxMjM4MDYxMCwianRpIjoiY2NjZDg2MmIxY2QzZDEyM2NiY2RkMGY0MDI2NWQ5NTQifQ.Okmp89OJPGtfjPGntbnEnhvCPe10OWT-PFhLyPkN31I',
+        pro_id: this.$store.state.products.products.id,
+        language: null
+      }
+      api.getCoupon(params).then(res => {
+        //
+        const couponList = res.data.list
+        this.couponList = couponList
+        this.visible = !this.visible
       })
     },
     toHome () {
@@ -317,6 +419,7 @@ export default {
         width: 730px;
         height: 100%;
         right: 0;
+        /*overflow-y: scroll;*/
         /*background-color: #b7cfff;*/
         .title-box {
           span {
@@ -352,8 +455,39 @@ export default {
           margin: 24px 0;
           padding: 25px 0 0 10px;
           background-color: #ebebeb;
+          .coupon-str-box {
+            display: inline-block;
+            width: 32px;
+            height: 22px;
+            position: relative;
+            cursor: pointer;
+            .get-coupon {
+              margin-right: 32px;
+              float: left;
+            }
+            .coupon-str {
+              position: absolute;
+              font-size: 14px!important;
+              line-height: 14px!important;
+              font-weight: normal!important;
+              top: 8px;
+              left: 7px;
+              z-index: 80;
+            }
+            img {
+              width: 100%;
+              height: 100%;
+            }
+          }
           p {
             position: relative;
+            &:nth-child(1) {
+              margin-bottom: 10px;
+            }
+            &:nth-child(2) {
+              height: 25px;
+              line-height: 25px;
+            }
             span:nth-child(1) {
               margin-right: 32px;
             }
@@ -368,16 +502,30 @@ export default {
             }
           }
         }
-        .color-list {
+        .attrList-list {
           width: 100%;
-          height: 50px;
-          line-height: 50px;
+          margin-bottom: 10px;
+          /*height: 50px;*/
+          /*line-height: 50px;*/
           /*background-color: #42ffba;*/
-          span:nth-child(1) {
-            margin-right: 55px;
+          .attrName {
+            /*margin-right: 55px;*/
+            display: inline-block;
+            float: left;
+            height: 100%;
+            width: 70px;
+          }
+          .attrList {
+            display: inline-block;
+            width: calc(100% - 70px);
+            height: 100%;
+            span {
+              margin-bottom: 10px;
+            }
           }
           .colorItemDefault {
             border: 1px solid #D3272D!important;
+            color: #d3272d;
           }
           .color-item {
             display: inline-block;
@@ -385,6 +533,7 @@ export default {
             padding: 0 10px;
             height: 32px;
             margin-right: 10px;
+            box-sizing: border-box;
             border: 1px solid #DCDFE6;
             text-align: center;
             line-height: 32px;
@@ -447,13 +596,13 @@ export default {
         .hr {
           width: 100%;
           height: 1px;
-          margin-top: 30px;
+          margin-top: 10px;
           background-color: #e4e4e4;
         }
         .end {
           width: 100%;
           height: 50px;
-          margin-top: 28px;
+          margin-top: 20px;
           /*background-color: #ff9166;*/
           .Favorites {
             float: right;
@@ -506,7 +655,7 @@ export default {
             display: inline-block;
             background-color: #acacac;
             text-align: center;
-            line-height: 19px;
+            line-height: 18px;
             width: 18px;
             height: 18px;
             color: white;
@@ -522,8 +671,7 @@ export default {
             display: inline-block;
             background-color: #acacac;
             text-align: center;
-            padding-right: 0.5px;
-            line-height: 18px;
+            line-height: 20px;
             width: 18px;
             height: 18px;
             color: white;
