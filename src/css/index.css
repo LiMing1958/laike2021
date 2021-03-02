@@ -65,4 +65,41 @@ body{
     /*overflow-y: scroll;*/
     height: 100%;
 }
+.ant-message {
+    margin-top: 30px;
+}
+.ant-message-success {
+    display: inline-block;
+    padding: 8px 10px;
+    border-radius: 5px;
+    width: 100%;
+    height: 100%;
+    background-color: #ffffff;
+}
+.ant-message-error {
+    color: #D4282D;
+    display: inline-block;
+    padding: 8px 10px;
+    border-radius: 5px;
+    width: 100%;
+    height: 100%;
+    background-color: #ffddf8;
+}
+.ant-message-warning {
+    color: #636363;
+    display: inline-block;
+    padding: 8px 10px;
+    border-radius: 5px;
+    width: 100%;
+    height: 100%;
+    background-color: #e7dd96;
+}
+.ant-message-notice-content {
+    display: inline-block;
+     padding: 0;
+    /* background: #fff; */
+    /* border-radius: 4px; */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    pointer-events: all;
+}
 

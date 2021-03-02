@@ -12,6 +12,10 @@ export default {
   getListAPI (params) {
     return http.get('/index.php?store_id=1&store_type=6', params)
   },
+  receive (params) {
+    // 首页领券中心立即领取
+    return http.get('/index.php?store_id=1&store_type=6', params)
+  },
   getCoupon (params) {
     return http.post('/index.php?store_id=1&store_type=6', params)
   },

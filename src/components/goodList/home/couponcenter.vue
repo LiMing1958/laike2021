@@ -40,7 +40,7 @@
               </div>
             </div>
             <div class="right">
-              <button>立即领取</button>
+              <button @click="receive(item)">立即领取</button>
             </div>
           </div>
       </div>
@@ -72,6 +72,24 @@ export default {
     this.getCouponCenter()
   },
   methods: {
+    receive (item) {
+      console.log(item)
+      const params = {
+        module: 'app_pc',
+        action: 'coupon',
+        m: 'receive',
+        access_id: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2MTIzMzc0MTAsImV4cCI6MTYxMjM4MDYxMCwianRpIjoiY2NjZDg2MmIxY2QzZDEyM2NiY2RkMGY0MDI2NWQ5NTQifQ.Okmp89OJPGtfjPGntbnEnhvCPe10OWT-PFhLyPkN31I',
+        id: item.id,
+        language: null
+      }
+      api.receive(params).then(res => {
+        if (res.data.code === 404) {
+          this.$message.error(
+            res.data.message
+          )
+        }
+      })
+    },
     getCouponCenter () {
       api.getCouponCenter(this.params).then(res => {
         this.list = res.data.data.list
