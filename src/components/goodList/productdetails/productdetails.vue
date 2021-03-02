@@ -80,7 +80,7 @@
                                     font-size: 34px;
                                     color: #d4282d;
                                     line-height: 28px;">
-                          {{parseInt(item.discount)}}
+                          {{parseInt(item.discount) > 0 ? parseInt(item.discount) : '1'}}
                         </span>
                         折
                         <span style="padding: 4px 5px;
@@ -551,7 +551,7 @@ export default {
           /*line-height: 50px;*/
           /*background-color: #42ffba;*/
           .quantity-btn {
-            margin-left: 56px;
+            margin-left: 42px;
             /*margin-top: 20px;*/
             display: inline-block;
             border-radius: 4px;
