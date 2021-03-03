@@ -181,6 +181,18 @@
                    </span>
                  </div>
                  <div class="comment-content">{{item.content}}</div>
+                 <span class="comment-images" v-for="items in item.images" :key="items.url" @click="handleClickImages(items)">
+                   <a-modal v-model="commentvisible"
+                            :footer="null"
+                            width="90%"
+                            :centered=true
+                            destroyOnClose="true">
+                   <div style="text-align: center;padding-top: 25px;" @click="commentvisible = !commentvisible">
+                     <img class="modal-code" :src="imgurl" alt="">
+                   </div>
+                 </a-modal>
+                     <img src="https://laikeds.oss-cn-shenzhen.aliyuncs.com/1/0/1604977168293.png" alt="">
+                   </span>
                  <div class="comment-time">
                    <span>{{item.attribute_str}}</span>
                    {{item.add_time}}
@@ -191,7 +203,8 @@
          </a-tabs>
        </div>
        <div class="product-details-right">
-         <div class="shop-list" id="shop">
+         <a-affix :offset-top="top">
+           <div class="shop-list" id="shop">
              <div class="nav-item">
                <img :src="shoplist.shop_logo" alt="">
                <span>{{shoplist.shop_name}}</span>
@@ -212,6 +225,7 @@
                </li>
              </ul>
            </div>
+         </a-affix>
          <div class="related-recommendations">
            <div class="nav-title">
              <span></span>
@@ -239,6 +253,7 @@ export default {
   data () {
     return {
       visible: false,
+      commentvisible: false,
       largeImg: null,
       pro: null,
       skuBeanList: null,
@@ -260,26 +275,40 @@ export default {
       commentZhui: null,
       commentlist: null,
       shoplist: null,
-      relatedRecommendations: null
+      relatedRecommendations: null,
+      imgurl: null
     }
   },
   mounted () {
     this.getProductsDetail()
     window.addEventListener('scroll', this.scrollHandle)
   },
+  destroyed () {
+    window.removeEventListener('scroll', this.scrollHandle)
+  },
   methods: {
-    scrollHandle (e) {
-      var top = e.srcElement.scrollingElement.scrollTop
-      if (top < 2000) {
-        console.log('这是第一屏')
-      } else if (top >= 2000 && top < 4000) {
-        console.log('这是第二屏')
-      } else if (top >= 4000 && top < 6000) {
-        console.log('这是第三屏')
-      } else if (top >= 6000 && top < 8000) {
-        console.log('这是第四屏')
-      } else if (top >= 8000) {
-        console.log('这是第五屏')
+    handleClickImages (items) {
+      // this.imgurl = items.url
+      this.imgurl = 'https://laikeds.oss-cn-shenzhen.aliyuncs.com/1/0/1604977168293.png'
+      this.commentvisible = !this.commentvisible
+    },
+    scrollHandle () {
+      const tabNode = document.getElementsByClassName('ant-tabs-nav-container')
+      var obj = tabNode[1]
+      var t = 0
+      while (obj) {
+        t = t + obj.offsetTop
+        obj = obj.offsetParent
+      }
+      var a = parseInt(document.documentElement.scrollTop)
+      var p = parseInt(t - a)
+      console.log(t, a, p)
+      if (p < 0) {
+        tabNode[1].style.position = 'fixed'
+        tabNode[1].style.top = '0'
+      }
+      if (a < 937) {
+        tabNode[1].style.position = 'unset'
       }
     },
     addCount () {
@@ -469,7 +498,17 @@ export default {
     font-size: 16px;
   }
   ::v-deep .ant-tabs-nav-container  {
+    width: 900px;
     background-color: #eaeaea;
+    z-index: 999;
+  }
+  ::v-deep .ant-modal-content {
+      width: 100%!important;
+      background: none;
+      box-shadow: none;
+    }
+  ::v-deep .ant-modal-close-x {
+    font-size: 24px;
   }
 .box {
   width: 1280px;
@@ -876,7 +915,7 @@ export default {
       }
       .comment-list {
         width: 100%;
-        height: 160px;
+        min-height: 160px;
         padding: 15px 0 35px 0;
         display: flex;
         align-items: center;
@@ -914,6 +953,12 @@ export default {
           width: calc(100% - 130px);
           height: 100%;
           /*background-color: #2991ff;*/
+         .comment-images {
+            cursor: pointer;
+            img {
+              width: 80px;
+            }
+          }
           .comment-type-img {
             margin-right: 5px;
           }
@@ -941,7 +986,7 @@ export default {
         width: 350px;
         height: 120px;
         padding: 10px 20px;
-        background-color: rgba(255, 227, 255, 0.6);
+        background-color: rgba(255, 227, 255, 0.8);
         ul {
           width: 100%;
           height: 36px;
