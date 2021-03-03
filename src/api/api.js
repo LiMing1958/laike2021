@@ -6,6 +6,9 @@ export default {
   getProductsDetail (params) {
     return http.get('/index.php?store_id=1&store_type=6', params)
   },
+  getcomment (params) { // 获取商品性情页面的评论信息
+    return http.get('/index.php?store_id=1&store_type=6', params)
+  },
   getSearchProducts (params) {
     return http.get('/index.php?store_id=1&store_type=6', params)
   },

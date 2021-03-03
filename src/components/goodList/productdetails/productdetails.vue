@@ -117,45 +117,117 @@
               </span>
             </p>
           </div>
-          <div class="attrList-list" v-for="item in attrList" :key="item.id">
-            <span class="attrName">{{item.attrName}}</span>
-            <span class="attrList">
-              <span class="color-item" :class="{ colorItemDefault: index === 0 && isDefault}" v-for="(items, index) in item.all" :key="index" @click="handleClickColor(items,item)">{{items}}</span>
-            </span>
+        <div class="attrList-list" v-for="item in attrList" :key="item.id">
+          <span class="attrName">{{item.attrName}}</span>
+          <span class="attrList">
+              <span class="color-item" :class="{ colorItemDefault: index === 0 && isDefault}" v-for="(items, index) in item.all" :key="index"  @click="handleClickColor(items,item)"  >{{items}}</span>
+          </span>
+        </div>
+        <div class="quantity">
+          <span>数量</span>
+          <div class="quantity-btn">
+            <span class="decrease" @click.stop="decrease" ref="decreasecount"><a-icon type="minus" /></span>
+            <input type="text" v-model="num" ref="inputTag">
+            <span class="add" @click.stop="addCount" ref="addcount"><a-icon type="plus" /></span>
           </div>
-          <div class="quantity">
-            <span>数量</span>
-            <div class="quantity-btn">
-              <span class="decrease" @click.stop="decrease" ref="decreasecount"><a-icon type="minus" /></span>
-              <input type="text" v-model="num" ref="inputTag">
-              <span class="add" @click.stop="addCount" ref="addcount"><a-icon type="plus" /></span>
+        </div>
+        <div class="hr"></div>
+        <div class="end">
+          <a-button type="danger" class="addToCart">
+            加入购物车
+          </a-button>
+          <a-button class="buyNow" type="danger" ghost>
+            立即购买
+          </a-button>
+          <span class="Favorites">
+            <div>
+              <p><a-icon type="star" /></p>
+              <p>收藏</p>
             </div>
-          </div>
-          <div class="hr"></div>
-          <div class="end">
-            <a-button type="danger" class="addToCart">
-              加入购物车
-            </a-button>
-            <a-button class="buyNow" type="danger" ghost>
-              立即购买
-            </a-button>
-            <span class="Favorites">
-              <div>
-                <p><a-icon type="star" /></p>
-                <p>收藏</p>
-              </div>
-            </span>
-          </div>
-          <div class="shareBox">
-            <span>分享</span>
-            <span>
-              <a-icon type="wechat" />
-            </span>
-            <span>
-              <a-icon type="chrome" />
-            </span>
-          </div>       </div>
+          </span>
+        </div>
+        <div class="shareBox">
+          <span>分享</span>
+          <span>
+            <a-icon type="wechat" />
+          </span>
+          <span>
+            <a-icon type="chrome" />
+          </span>
+        </div>
       </div>
+    </div>
+     <div class="product-details">
+       <div class="product-details-left">
+         <a-tabs v-model="activeKey" @change="getcomment(activeKey)">
+           <a-tab-pane key="1" tab="商品详情">
+             <div class="product-container">333333333333</div>
+           </a-tab-pane>
+           <a-tab-pane key="2" :tab="comments ? comments : '商品评价（0）'" force-render>
+             <div class="product-review" @click="handleClickComment">
+               <span>全部评价（{{commenttotal}}）</span>
+               <span>有图（{{commentImg ? commentImg : '0'}}）</span>
+               <span>有追评（{{commentZhui ? commentZhui : '0'}}）</span>
+             </div>
+             <div class="comment-list" v-for="item in commentlist" :key="item.id">
+               <div class="username">
+                 <img :src="item.headimgurl" alt="">
+                 <span>{{item.user_name}}</span>
+               </div>
+               <div class="comment-msg">
+                 <div>
+                   <span class="comment-type-img" v-for="items in item.CommentTypeArr" :key="items">
+                     <img src="../../../assets/images/pj.png" alt="">
+                   </span>
+                 </div>
+                 <div class="comment-content">{{item.content}}</div>
+                 <div class="comment-time">
+                   <span>{{item.attribute_str}}</span>
+                   {{item.add_time}}
+                 </div>
+               </div>
+             </div>
+           </a-tab-pane>
+         </a-tabs>
+       </div>
+       <div class="product-details-right">
+         <div class="shop-list" id="shop">
+             <div class="nav-item">
+               <img :src="shoplist.shop_logo" alt="">
+               <span>{{shoplist.shop_name}}</span>
+               <a-button class="to-shop-btn">进店逛逛</a-button>
+             </div>
+             <ul>
+               <li>
+                 <h2>{{shoplist.quantity_on_sale}}</h2>
+                 <span>在售商品</span>
+               </li>
+               <li>
+                 <h2>{{shoplist.quantity_sold}}</h2>
+                 <span>已售</span>
+               </li>
+               <li>
+                 <h2>{{shoplist.collection_num}}</h2>
+                 <span>关注人数</span>
+               </li>
+             </ul>
+           </div>
+         <div class="related-recommendations">
+           <div class="nav-title">
+             <span></span>
+             <span>相关推荐</span>
+             <span></span>
+           </div>
+           <div class="recommendations-list" v-for="item in relatedRecommendations" :key="item.id">
+             <img :src="item.imgurl" alt="">
+             <div class="recommendations-msg">
+               <h1>{{item.product_title}}</h1>
+               <p>{{item.price}}</p>
+             </div>
+           </div>
+         </div>
+       </div>
+     </div>
     </div>
   </div>
 </template>
@@ -179,13 +251,37 @@ export default {
       num: 1,
       count: null,
       couponStr: null,
-      couponList: null
+      couponList: null,
+      activeKey: '1',
+      commentstotal: null,
+      commenttotal: null,
+      comments: null,
+      commentImg: null,
+      commentZhui: null,
+      commentlist: null,
+      shoplist: null,
+      relatedRecommendations: null
     }
   },
   mounted () {
     this.getProductsDetail()
+    window.addEventListener('scroll', this.scrollHandle)
   },
   methods: {
+    scrollHandle (e) {
+      var top = e.srcElement.scrollingElement.scrollTop
+      if (top < 2000) {
+        console.log('这是第一屏')
+      } else if (top >= 2000 && top < 4000) {
+        console.log('这是第二屏')
+      } else if (top >= 4000 && top < 6000) {
+        console.log('这是第三屏')
+      } else if (top >= 6000 && top < 8000) {
+        console.log('这是第四屏')
+      } else if (top >= 8000) {
+        console.log('这是第五屏')
+      }
+    },
     addCount () {
       if (this.num < this.count) {
         this.num++
@@ -285,13 +381,17 @@ export default {
       api.getProductsDetail(params).then(res => {
         this.pro = res.data.data.pro
         this.attrList = res.data.data.attrList
-        console.log(res.data.data)
+        // console.log(res.data.data)
         const imgData = res.data.data.skuBeanList
         this.skuBeanList = imgData
         this.largeImg = imgData[0].imgurl
         this.count = parseInt(imgData[0].count)
         this.couponStr = parseInt(res.data.data.coupon_str[0])
         this.proImgArr = res.data.data.pro.img_arr
+        this.commenttotal = res.data.data.comments_num
+        this.comments = '商品评价（' + res.data.data.comments_num + '）'
+        this.shoplist = res.data.data.shop_list
+        this.relatedRecommendations = res.data.data.related_recommendations
       })
     },
     getCoupon () {
@@ -311,6 +411,51 @@ export default {
         this.visible = !this.visible
       })
     },
+    getcomment (activeKey) {
+      if (activeKey === '2') {
+        const params = {
+          module: 'app_pc',
+          action: 'product',
+          m: 'getcomment',
+          access_id: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2MTIzMzc0MTAsImV4cCI6MTYxMjM4MDYxMCwianRpIjoiY2NjZDg2MmIxY2QzZDEyM2NiY2RkMGY0MDI2NWQ5NTQifQ.Okmp89OJPGtfjPGntbnEnhvCPe10OWT-PFhLyPkN31I',
+          pid: this.$store.state.products.products.id,
+          type: 0,
+          language: null
+        }
+        api.getcomment(params).then(res => {
+          // this.commentstotal = '商品评价（' + res.data.data.comments_total + '）'
+          this.comments = '商品评价（' + res.data.data.comments_total + '）'
+          this.commenttotal = res.data.data.comments_total
+          this.commentImg = res.data.data.comments_image
+          this.commentZhui = res.data.data.comments_zhui
+          const List = res.data.data.list
+          const listLength = List.length
+          for (let j = 0; j < listLength; j++) {
+            const CommentTypeLength = parseInt(List[j].CommentType)
+            const arr = []
+            for (let i = 0; i < CommentTypeLength; i++) {
+              arr.push(i)
+            }
+            List[j].CommentTypeArr = arr
+          }
+          this.commentlist = List
+        })
+      }
+    },
+    handleClickComment () {
+      const ev = window.event
+      const target = ev.target || ev.srcElement
+      if (target.nodeName === 'SPAN') {
+        const childs = target.parentNode.childNodes
+        childs.forEach(item => {
+          item.style.border = '1px solid rgba(221,221,221,1)'
+          item.style.color = '#010101'
+          item.style.fontWeight = 'normal'
+        })
+        target.style.border = '1px solid #D3272D'
+        target.style.color = '#D3272D'
+      }
+    },
     toHome () {
       this.$store.commit('toHome', 'HomeList')
     }
@@ -319,6 +464,13 @@ export default {
 </script>
 
 <style scoped lang="scss">
+  ::v-deep .ant-tabs-nav .ant-tabs-tab-active {
+    font-weight: bold;
+    font-size: 16px;
+  }
+  ::v-deep .ant-tabs-nav-container  {
+    background-color: #eaeaea;
+  }
 .box {
   width: 1280px;
   margin: 0 auto;
@@ -524,23 +676,23 @@ export default {
             }
           }
           .colorItemDefault {
+            box-sizing: border-box!important;
             border: 1px solid #D3272D!important;
             color: #d3272d;
           }
           .color-item {
             display: inline-block;
-            min-width: 56px;
+            /*min-width: 56px;*/
             padding: 0 10px;
             height: 32px;
             margin-right: 10px;
-            box-sizing: border-box;
             border: 1px solid #DCDFE6;
             text-align: center;
             line-height: 32px;
             cursor: pointer;
-            &:hover {
-              border: 1px solid #D3272D;
-            }
+          }
+          .color-item:hover {
+            border: 1px solid #D3272D;
           }
         }
         .quantity {
@@ -681,6 +833,225 @@ export default {
             cursor: pointer;
             &:hover {
               background-color: #1cb637;
+            }
+          }
+        }
+      }
+    }
+  }
+  .product-details {
+    width: 100%;
+    margin-top: 100px;
+    display: flex;
+    justify-content: space-between;
+    /*background-color: #ffcf94;*/
+    .product-details-left {
+      width: 900px;
+      /*float: left;*/
+      .product-container{
+        width: 100%;
+        padding: 15px 0;
+      }
+      .product-review {
+        width: 100%;
+        padding: 15px 0;
+        span {
+          display: inline-block;
+          margin-right: 10px;
+          padding: 0 10px;
+          height: 28px;
+          line-height: 27px;
+          border: 1px solid rgba(221,221,221,1);
+          border-radius: 2px;
+          box-sizing: border-box;
+          font-size: 14px;
+          color: #010101;
+          cursor: pointer;
+          &:nth-child(1) {
+            font-weight: bold;
+            color: #D3272D;
+            border-color: #D3272D;
+          }
+        }
+      }
+      .comment-list {
+        width: 100%;
+        height: 160px;
+        padding: 15px 0 35px 0;
+        display: flex;
+        align-items: center;
+        border-bottom: 1px solid #d9d9d9;
+        /*background-color: #ffc9d0;*/
+        .username {
+          width: 130px;
+          height: 100%;
+          display: inline-block;
+          position: relative;
+          /*background-color: #ff56f3;*/
+          img {
+            width: 30px;
+            height: 30px;
+            position: absolute;
+            top: 0;
+          }
+          span {
+            position: absolute;
+            top: 7px;
+            left: 31px;
+            display: inline-block;
+            font-size: 12px;
+            height: 30px;
+            /*line-height: 8px;*/
+            color: #666666;
+            margin-left: 9px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+        }
+        .comment-msg {
+          display: inline-block;
+          width: calc(100% - 130px);
+          height: 100%;
+          /*background-color: #2991ff;*/
+          .comment-type-img {
+            margin-right: 5px;
+          }
+          .comment-content {
+            margin-top: 15px;
+            font-size: 14px;
+            color: #020202;
+          }
+          .comment-time {
+            font-size: 12px;
+            color: #999999;
+            line-height: 12px;
+            margin: 20px 0;
+            span {
+              margin-right: 10px;
+            }
+          }
+        }
+      }
+    }
+    .product-details-right {
+      width: calc(100% - 920px);
+      /*background-color: #ffb3c9;*/
+      .shop-list {
+        width: 350px;
+        height: 120px;
+        padding: 10px 20px;
+        background-color: rgba(255, 227, 255, 0.6);
+        ul {
+          width: 100%;
+          height: 36px;
+          margin-top: 30px;
+          display: flex;
+          justify-content: space-between;
+          li {
+            width: 33%;
+            height: 100%;
+            line-height: 100%;
+            text-align: center;
+            display: inline-block;
+            border-right: 1px solid #bfbfbf;
+            h2 {
+              margin-bottom: 10px;
+              font-size: 16px;
+              color: #010101;
+              font-weight: bold;
+            }
+            /*background-color: #ffe125;*/
+            &:last-child {
+              border: none;
+            }
+          }
+        }
+        .nav-item {
+          width: 100%;
+          height: 30px;
+          font-size: 16px;
+          color: #020202;
+          line-height: 30px;
+          /*background-color: #ff0e4b;*/
+          img {
+            width: 29px;
+            height: 29px;
+            margin-right: 10px;
+          }
+          .to-shop-btn {
+            float: right;
+            color: #D4282D;
+            border: 1px solid #D4282D;
+            margin-right: 10px;
+            &:hover {
+              border: 1px solid #ff7175;
+            }
+          }
+        }
+      }
+      .related-recommendations {
+        width: 100%;
+        /*height: 500px;*/
+        margin-top: 23px;
+        padding: 5px 23px 10px 23px;
+        border: 1px solid #dedede;
+        .nav-title {
+          width: 100%;
+          height: 70px;
+          /*background-color: #d9ffa1;*/
+          display: flex;
+          margin-bottom: 15px;
+          justify-content: space-between;
+          align-items: center;
+          span {
+            display: inline-block;
+            &:nth-child(2) {
+              color: #010101;
+              font-weight: bold;
+              font-size: 20px;
+              line-height: 20px;
+              padding: 25px 0;
+              text-align: center;
+            }
+            &:nth-child(1) {
+              width: 62px;
+              height: 1px;
+              background-color: #dedede;
+            }
+            &:nth-child(3) {
+              width: 62px;
+              height: 1px;
+              background-color: #dedede;
+            }
+          }
+        }
+        .recommendations-list {
+          width: 100%;
+          img {
+            width: 100%;
+          }
+          .recommendations-msg {
+            padding: 15px 15px 20px 15px;
+            width: 100%;
+            /*height: 80px;*/
+            /*background-color: #ffe095;*/
+            text-align: center;
+            h1 {
+              font-size: 14px;
+              line-height: 14px;
+              font-weight: bold;
+              color: #020202;
+              width: 85%;
+              margin: 20px auto 0;
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
+            }
+            p {
+              font-size: 14px;
+              color: #D4282D;
+              margin-top: 10px;
             }
           }
         }

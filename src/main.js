@@ -8,8 +8,9 @@ import './assets/styles/border.css'
 import './assets/styles/iconfont.css'
 import 'swiper/dist/css/swiper.css'
 import VueAwesomeSwiper from 'vue-awesome-swiper'
-import { Button, Icon, Tabs, Progress, Pagination, Modal, Breadcrumb, Message } from 'ant-design-vue'
+import { Button, Icon, Tabs, Progress, Pagination, Modal, Breadcrumb, Message, Affix } from 'ant-design-vue'
 Vue.prototype.$message = Message
+Vue.use(Affix)
 Vue.use(Icon)
 Vue.use(VueAwesomeSwiper)
 Vue.use(Tabs)
