@@ -189,7 +189,7 @@
                             :centered=true
                             destroyOnClose="true">
                    <div style="text-align: center;padding-top: 25px;" @click="commentvisible = !commentvisible">
-                     <img style="width: 700px;" class="modal-code" :src="imgurl" alt="">
+                     <img style="width: 600px;" class="modal-code" :src="imgurl" alt="">
                    </div>
                  </a-modal>
                      <img src="https://laikeds.oss-cn-shenzhen.aliyuncs.com/1/0/1604977168293.png" alt="">
@@ -236,7 +236,7 @@
              <span>相关推荐</span>
              <span></span>
            </div>
-           <div class="recommendations-list" v-for="item in relatedRecommendations" :key="item.id">
+           <div class="recommendations-list" v-for="item in relatedRecommendations" :key="item.id" @click="handleRecommendations(item)">
              <img :src="item.imgurl" alt="">
              <div class="recommendations-msg">
                <h1>{{item.product_title}}</h1>
@@ -284,7 +284,8 @@ export default {
       shoplist: null,
       relatedRecommendations: null,
       imgurl: null,
-      proImagesUrl: null
+      proImagesUrl: null,
+      isToTop: false
     }
   },
   components: {
@@ -333,6 +334,13 @@ export default {
       if (a < 938) {
         tabNode[1].style.position = 'unset'
       }
+    },
+    handleRecommendations (item) {
+      this.isToTop = !this.isToTop
+      this.$store.commit('sendProductDetails', { products: item, title: '相关推荐' })
+      this.getProductsDetail()
+      document.documentElement.scrollTop = 0
+      // console.log(item)
     },
     addCount () {
       if (this.num < this.count) {
@@ -431,10 +439,12 @@ export default {
         language: null
       }
       api.getProductsDetail(params).then(res => {
+        // if (res.status === 200) {
+        //   document.documentElement.scrollTop = 0
+        // }
         this.pro = res.data.data.pro
         // this.getAttribute(this.pro)
         this.attrList = res.data.data.attrList
-        // console.log(res.data.data)
         const imgData = res.data.data.skuBeanList
         this.skuBeanList = imgData
         this.largeImg = imgData[0].imgurl
@@ -565,7 +575,7 @@ export default {
     /*background-color: #ff956d;*/
     .images-list {
       width: 100%;
-      min-height: 570px;
+      min-height: 580px;
       position: relative;
       .left-images {
         position: absolute;
@@ -575,7 +585,8 @@ export default {
         /*background-color: #ff8144;*/
         .large-img {
           width: 100% ;
-          height: 478px;
+          height: 490px;
+          border: 1px solid #e4e4e4;
           /*position: absolute;*/
           /*overflow: hidden;*/
           /*background-color: #ff4a45;*/
@@ -1115,6 +1126,7 @@ export default {
         }
         .recommendations-list {
           width: 100%;
+          cursor: pointer;
           img {
             width: 100%;
           }
