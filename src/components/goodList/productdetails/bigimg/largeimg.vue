@@ -67,13 +67,14 @@ export default {
       this.$refs.mas.style.top = maskY + 'px'
       // 3、当mask移动的时侯，让大图片big移动
       // 公式：mask的移动距离 / mask的最大移动距离 = 大图的移动距离 / 大图最大的移动距离
+      // mask 最大移动距离
       var maskMax = this.$refs.box.offsetWidth - this.$refs.mas.offsetWidth
       // 定义大图最大的移动距离
       var bigImageMax = this.$refs.bigimg.offsetWidth - this.$refs.bi.offsetWidth
       // 算出大图的移动距离
-      console.log(maskMax, bigImageMax, this.$refs.bigimg.offsetWidth, this.$refs.bi.offsetWidth)
       var bigImageX = maskX * bigImageMax / maskMax
       var bigImageY = maskY * bigImageMax / maskMax
+      // 设置 position 偏移量
       this.$refs.bigimg.style.left = -bigImageX + 'px'
       this.$refs.bigimg.style.top = -bigImageY + 'px'
 
@@ -96,7 +97,7 @@ export default {
   .box1 {
     width: 100%;
     height: 488px;
-    border: 1px solid #ccc;
+    /*border: 1px solid #ccc;*/
     /*position: relative;*/
     .small {
       height: 488px;
@@ -109,17 +110,19 @@ export default {
         position: absolute;
         top: 0;
         left: 0;
+        background-image: linear-gradient(90deg, rgba(200, 0, 0, 0.15) 10%, rgba(0, 0, 0, 0) 10%),linear-gradient(rgba(200, 0, 0, 0.15) 10%, rgba(0, 0, 0, 0) 10%);
+        background-size: 5px 5px;
         cursor: move;
       }
     }
     .big {
       width: 488px;
-      height: 488px;
+      height: 490px;
       position: absolute;
       padding: 10px;
       top: 0;
       left: 500px;
-      background-color: #afff6c;
+      /*background-color: #afff6c;*/
       border: 1px solid #ccc;
       overflow: hidden;
       z-index: 1000;
