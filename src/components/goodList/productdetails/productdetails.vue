@@ -15,7 +15,8 @@
       <div class="images-list">
         <div class="left-images">
           <div class="large-img">
-            <img :src="largeImg" alt="">
+            <bigimg :imgurl="largeImg"></bigimg>
+<!--            <img :src="largeImg" alt="">-->
           </div>
           <div class="list-img">
             <span class="icon-left" @click="leftClick">
@@ -161,13 +162,13 @@
        <div class="product-details-left">
          <a-tabs v-model="activeKey" @change="getcomment(activeKey)">
            <a-tab-pane key="1" tab="商品详情">
-             <div class="product-container">333333333333</div>
+             <div class="product-container" v-html="pro.content"></div>
            </a-tab-pane>
            <a-tab-pane key="2" :tab="comments ? comments : '商品评价（0）'" force-render>
              <div class="product-review" @click="handleClickComment">
-               <span>全部评价（{{commenttotal}}）</span>
-               <span>有图（{{commentImg ? commentImg : '0'}}）</span>
-               <span>有追评（{{commentZhui ? commentZhui : '0'}}）</span>
+               <span @click="all">全部评价（{{commenttotal}}）</span>
+               <span @click="handleHasImg">有图（{{commentImg ? commentImg : '0'}}）</span>
+               <span @click="handleHasZhuiPing">有追评（{{commentZhui ? commentZhui : '0'}}）</span>
              </div>
              <div class="comment-list" v-for="item in commentlist" :key="item.id">
                <div class="username">
@@ -188,7 +189,7 @@
                             :centered=true
                             destroyOnClose="true">
                    <div style="text-align: center;padding-top: 25px;" @click="commentvisible = !commentvisible">
-                     <img class="modal-code" :src="imgurl" alt="">
+                     <img style="width: 700px;" class="modal-code" :src="imgurl" alt="">
                    </div>
                  </a-modal>
                      <img src="https://laikeds.oss-cn-shenzhen.aliyuncs.com/1/0/1604977168293.png" alt="">
@@ -198,6 +199,9 @@
                    {{item.add_time}}
                  </div>
                </div>
+             </div>
+             <div class="pagination">
+               <a-pagination v-model="current" :total="length" show-less-items />
              </div>
            </a-tab-pane>
          </a-tabs>
@@ -248,11 +252,14 @@
 
 <script>
 import api from '@/api/api'
+import bigimg from './bigimg/largeimg'
 export default {
   name: 'productdetails',
   data () {
     return {
       visible: false,
+      current: 1,
+      length: 1,
       commentvisible: false,
       largeImg: null,
       pro: null,
@@ -276,8 +283,12 @@ export default {
       commentlist: null,
       shoplist: null,
       relatedRecommendations: null,
-      imgurl: null
+      imgurl: null,
+      proImagesUrl: null
     }
+  },
+  components: {
+    bigimg
   },
   mounted () {
     this.getProductsDetail()
@@ -287,6 +298,18 @@ export default {
     window.removeEventListener('scroll', this.scrollHandle)
   },
   methods: {
+    all () {
+      const type = 0
+      this.getcomments(type)
+    },
+    handleHasImg () {
+      const type = 1
+      this.getcomments(type)
+    },
+    handleHasZhuiPing () {
+      const type = 2
+      this.getcomments(type)
+    },
     handleClickImages (items) {
       // this.imgurl = items.url
       this.imgurl = 'https://laikeds.oss-cn-shenzhen.aliyuncs.com/1/0/1604977168293.png'
@@ -303,11 +326,11 @@ export default {
       var a = parseInt(document.documentElement.scrollTop)
       var p = parseInt(t - a)
       console.log(t, a, p)
-      if (p < 0) {
+      if (p < -1) {
         tabNode[1].style.position = 'fixed'
         tabNode[1].style.top = '0'
       }
-      if (a < 937) {
+      if (a < 938) {
         tabNode[1].style.position = 'unset'
       }
     },
@@ -409,6 +432,7 @@ export default {
       }
       api.getProductsDetail(params).then(res => {
         this.pro = res.data.data.pro
+        // this.getAttribute(this.pro)
         this.attrList = res.data.data.attrList
         // console.log(res.data.data)
         const imgData = res.data.data.skuBeanList
@@ -440,35 +464,39 @@ export default {
         this.visible = !this.visible
       })
     },
+    getcomments (type) {
+      const params = {
+        module: 'app_pc',
+        action: 'product',
+        m: 'getcomment',
+        access_id: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2MTIzMzc0MTAsImV4cCI6MTYxMjM4MDYxMCwianRpIjoiY2NjZDg2MmIxY2QzZDEyM2NiY2RkMGY0MDI2NWQ5NTQifQ.Okmp89OJPGtfjPGntbnEnhvCPe10OWT-PFhLyPkN31I',
+        pid: this.$store.state.products.products.id,
+        type: type,
+        language: null
+      }
+      api.getcomment(params).then(res => {
+        // this.commentstotal = '商品评价（' + res.data.data.comments_total + '）'
+        this.comments = '商品评价（' + res.data.data.comments_total + '）'
+        this.commenttotal = res.data.data.comments_total
+        this.commentImg = res.data.data.comments_image
+        this.commentZhui = res.data.data.comments_zhui
+        const List = res.data.data.list
+        const listLength = List.length
+        for (let j = 0; j < listLength; j++) {
+          const CommentTypeLength = parseInt(List[j].CommentType)
+          const arr = []
+          for (let i = 0; i < CommentTypeLength; i++) {
+            arr.push(i)
+          }
+          List[j].CommentTypeArr = arr
+        }
+        this.commentlist = List
+      })
+    },
     getcomment (activeKey) {
       if (activeKey === '2') {
-        const params = {
-          module: 'app_pc',
-          action: 'product',
-          m: 'getcomment',
-          access_id: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2MTIzMzc0MTAsImV4cCI6MTYxMjM4MDYxMCwianRpIjoiY2NjZDg2MmIxY2QzZDEyM2NiY2RkMGY0MDI2NWQ5NTQifQ.Okmp89OJPGtfjPGntbnEnhvCPe10OWT-PFhLyPkN31I',
-          pid: this.$store.state.products.products.id,
-          type: 0,
-          language: null
-        }
-        api.getcomment(params).then(res => {
-          // this.commentstotal = '商品评价（' + res.data.data.comments_total + '）'
-          this.comments = '商品评价（' + res.data.data.comments_total + '）'
-          this.commenttotal = res.data.data.comments_total
-          this.commentImg = res.data.data.comments_image
-          this.commentZhui = res.data.data.comments_zhui
-          const List = res.data.data.list
-          const listLength = List.length
-          for (let j = 0; j < listLength; j++) {
-            const CommentTypeLength = parseInt(List[j].CommentType)
-            const arr = []
-            for (let i = 0; i < CommentTypeLength; i++) {
-              arr.push(i)
-            }
-            List[j].CommentTypeArr = arr
-          }
-          this.commentlist = List
-        })
+        const type = 0
+        this.getcomments(type)
       }
     },
     handleClickComment () {
@@ -493,6 +521,9 @@ export default {
 </script>
 
 <style scoped lang="scss">
+  ::v-deep img {
+    max-width: 100% !important;
+  }
   ::v-deep .ant-tabs-nav .ant-tabs-tab-active {
     font-weight: bold;
     font-size: 16px;
@@ -545,6 +576,8 @@ export default {
         .large-img {
           width: 100% ;
           height: 478px;
+          /*position: absolute;*/
+          /*overflow: hidden;*/
           /*background-color: #ff4a45;*/
           img {
             width: 100%;
@@ -884,12 +917,15 @@ export default {
     display: flex;
     justify-content: space-between;
     /*background-color: #ffcf94;*/
-    .product-details-left {
+    ::v-deep .product-details-left {
       width: 900px;
       /*float: left;*/
       .product-container{
         width: 100%;
         padding: 15px 0;
+        img {
+          width: 100%;
+        }
       }
       .product-review {
         width: 100%;
@@ -917,15 +953,15 @@ export default {
         width: 100%;
         min-height: 160px;
         padding: 15px 0 35px 0;
-        display: flex;
-        align-items: center;
+        /*display: flex;*/
+        /*align-items: center;*/
         border-bottom: 1px solid #d9d9d9;
         /*background-color: #ffc9d0;*/
         .username {
           width: 130px;
           height: 100%;
           display: inline-block;
-          position: relative;
+          position: absolute;
           /*background-color: #ff56f3;*/
           img {
             width: 30px;
@@ -952,6 +988,7 @@ export default {
           display: inline-block;
           width: calc(100% - 130px);
           height: 100%;
+          margin-left: 130px;
           /*background-color: #2991ff;*/
          .comment-images {
             cursor: pointer;
@@ -977,6 +1014,11 @@ export default {
             }
           }
         }
+      }
+      .pagination {
+        width: 100%;
+        text-align: center;
+        margin-top: 35px;
       }
     }
     .product-details-right {
