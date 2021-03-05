@@ -1,4 +1,7 @@
 export default {
+  setRequestData (state, type) {
+    state.requestDataType = type
+  },
   toMoreSecPage (state, showPage) {
     state.showPage = showPage
   },

@@ -149,11 +149,11 @@
         </div>
         <div class="shareBox">
           <span>分享</span>
-          <span>
-            <a-icon type="wechat" />
+          <span class="iconfont">
+            &#xe65b;
           </span>
-          <span>
-            <a-icon type="chrome" />
+          <span class="iconfont">
+            &#xe659;
           </span>
         </div>
       </div>
@@ -253,8 +253,11 @@
 <script>
 import api from '@/api/api'
 import bigimg from './bigimg/largeimg'
+// import mixin from '../../../assets/js/scrollTop'
+import mixin from '@/assets/js/scrollTop'
 export default {
   name: 'productdetails',
+  mixins: [mixin],
   data () {
     return {
       visible: false,
@@ -339,35 +342,7 @@ export default {
       this.isToTop = !this.isToTop
       this.$store.commit('sendProductDetails', { products: item, title: '相关推荐' })
       this.getProductsDetail()
-      // //设置定时器
-      var timerId = null
-      if (timerId) {
-        clearInterval(timerId)
-        timerId = null
-      }
-      timerId = setInterval(function () {
-        // 步进，每次移动的距离
-        var step = 50
-        // 目标位置
-        var target = 0
-        // 获取当前位置
-        var current = document.documentElement.scrollTop
-        // 判断当前位置大于目标位置时，将步进变成负值
-        if (current > target) {
-          step = -Math.abs(step)
-        }
-        if (Math.abs(current - target) <= Math.abs(step)) {
-          clearInterval(timerId)
-          document.body.scrollTop = target
-          document.documentElement.scrollTop = target
-        } else {
-          current += step
-          document.body.scrollTop = current
-          document.documentElement.scrollTop = current
-        }
-      }, 5)
-      // document.documentElement.scrollTop = 0
-      // console.log(item)
+      this.scrolltotop()
     },
     addCount () {
       if (this.num < this.count) {
@@ -915,34 +890,22 @@ export default {
           margin-top: auto;
           span:nth-child(2) {
             display: inline-block;
-            background-color: #acacac;
             text-align: center;
-            line-height: 18px;
-            width: 18px;
-            height: 18px;
-            color: white;
-            font-size: 12px;
-            border-radius: 18px;
+            font-size: 18px;
             margin-left: 60px;
             cursor: pointer;
             &:hover {
-              background-color: #1cb637;
+             color: #1cb637;
             }
           }
           span:nth-child(3) {
             display: inline-block;
-            background-color: #acacac;
             text-align: center;
-            line-height: 20px;
-            width: 18px;
-            height: 18px;
-            color: white;
-            font-size: 12px;
-            border-radius: 18px;
+            font-size: 20px;
             margin-left: 15px;
             cursor: pointer;
             &:hover {
-              background-color: #1cb637;
+             color: #1cb637;
             }
           }
         }

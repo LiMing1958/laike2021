@@ -111,7 +111,7 @@ export default {
         top: 0;
         left: 0;
         background-image: linear-gradient(90deg, rgba(200, 0, 0, 0.15) 10%, rgba(0, 0, 0, 0) 10%),linear-gradient(rgba(200, 0, 0, 0.15) 10%, rgba(0, 0, 0, 0) 10%);
-        background-size: 5px 5px;
+        background-size: 6px 6px;
         cursor: move;
       }
     }

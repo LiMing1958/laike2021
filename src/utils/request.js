@@ -1,5 +1,6 @@
 import axios from 'axios'
 import qs from 'qs'
+import store from '@/store/index'
 const service = axios.create({
   baseURL: process.env.BASE_API,
   timeout: 3 * 1000
@@ -10,12 +11,20 @@ service.interceptors.request.use(config => {
   // }
   // localStorage.setItem('pc_user', JSON.stringify(user))
   // location.pathname = '/PC/index.html'
-  // config.data = JSON.stringify(config.data)
-  // 后台需要formData格式，所以需要用qs插件转换格式
-  config.data = qs.stringify(config.data)
-  config.headers = {
-    'Content-Type': 'application/x-www-form-urlencoded'
+  if (store.state.requestDataType) {
+    // 后台需要formData格式，所以需要用qs插件转换格式
+    config.data = qs.stringify(config.data)
+    config.headers = {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    }
+  } else { // 客服留言所需数据类型
+    config.headers = {
+      'Content-Type': 'application/json'
+    }
   }
+
+  console.log(config.headers)
+
   return config
 }, error => {
   Promise.reject(error)

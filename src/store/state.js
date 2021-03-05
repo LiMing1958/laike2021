@@ -1,4 +1,5 @@
 export default {
+  requestDataType: true,
   showPage: 'HomeList',
   secondTime: null,
   endtime: null,
