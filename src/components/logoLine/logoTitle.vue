@@ -2,7 +2,7 @@
   <div class="logoTitle">
     <div class="logo-img">
       <img class="imgContain" src="../../assets/images/logo.png" alt="logo">
-      <div class="searchList" v-show="visibleSearch">
+      <div class="searchList" v-show="visibleSearch" @mouseleave="addClose" @mouseenter="removeClose">
         <div class="inputBox">
           <input type="text" v-model="searchText" placeholder="搜索商品、品牌">
         </div>
@@ -18,7 +18,7 @@
           </div>
         </div>
       </div>
-      <div class="carList" v-show="visible">
+      <div class="carList" v-show="visible" @mouseleave="addClose" @mouseenter="removeClose">
         <div class="title-top">最新加入的商品</div>
         <div class="car-contain">
           <div class="cart-img">
@@ -38,7 +38,7 @@
           <button>去购物车</button>
         </div>
       </div>
-      <div class="iconList">
+      <div class="iconList" @mouseleave="addClose" @mouseenter="removeClose">
         <span id="searchIcon" class="iconfont" @click="handleClickSearch" ref="searchIcon">&#xe78b;</span>
         <span class="iconfont" @click="handleClickCart" ref="cartIcon">&#xe645;</span>
         <span class="num-red">4</span>
@@ -63,6 +63,22 @@ export default {
     this.getSearchList()
   },
   methods: {
+    removeClose () {
+      document.removeEventListener('click', this.handleClose)
+    },
+    addClose () {
+      document.addEventListener('click', this.handleClose)
+    },
+    handleClose () {
+      if (this.visibleSearch) {
+        this.visibleSearch = false
+        this.$refs.searchIcon.style.color = '#989898'
+      }
+      if (this.visible) {
+        this.visible = false
+        this.$refs.cartIcon.style.color = '#989898'
+      }
+    },
     deleteHistory () {
       if (this.cartSearchList.length > 0) {
         const params = {

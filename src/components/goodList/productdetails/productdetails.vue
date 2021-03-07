@@ -16,6 +16,9 @@
         <div class="left-images">
           <div class="large-img">
             <bigimg :imgurl="largeImg"></bigimg>
+            <div class="coverContent" v-if="this.$store.state.products.products.status === '3'">
+              已下架
+            </div>
 <!--            <img :src="largeImg" alt="">-->
           </div>
           <div class="list-img">
@@ -118,10 +121,10 @@
               </span>
             </p>
           </div>
-        <div class="attrList-list" v-for="item in attrList" :key="item.id">
+        <div class="attrList-list" v-for="(item, indexPa) in attrList" :key="item.id">
           <span class="attrName">{{item.attrName}}</span>
           <span class="attrList">
-              <span class="color-item" :class="{ colorItemDefault: index === 0 && isDefault}" v-for="(items, index) in item.all" :key="index"  @click="handleClickColor(items,item)"  >{{items}}</span>
+              <span class="color-item" :class="{ colorItemDefault: index === 0, stockClass: count === 0}" v-for="(items, index) in item.attr" :key="index"  @click="handleClickColor(items,item, index, indexPa)">{{items.attributeValue}}</span>
           </span>
         </div>
         <div class="quantity">
@@ -134,10 +137,10 @@
         </div>
         <div class="hr"></div>
         <div class="end">
-          <a-button type="danger" class="addToCart">
+          <a-button ref="addCart" type="danger" class="addToCart" :class="{ offShelf: $store.state.products.products.status === '3' || count === 0 }" @click="addToShopCart">
             加入购物车
           </a-button>
-          <a-button class="buyNow" type="danger" ghost>
+          <a-button class="buyNow" :class="{ offShelfBuy: $store.state.products.products.status === '3' || count === 0 }" type="danger" ghost @click="buyNow">
             立即购买
           </a-button>
           <span class="Favorites">
@@ -260,6 +263,7 @@ export default {
   mixins: [mixin],
   data () {
     return {
+      items: null,
       visible: false,
       current: 1,
       length: 1,
@@ -273,7 +277,7 @@ export default {
       isClickItem: false,
       ClickIndex: null,
       isDefault: true,
-      num: 1,
+      num: null,
       count: null,
       couponStr: null,
       couponList: null,
@@ -288,7 +292,10 @@ export default {
       relatedRecommendations: null,
       imgurl: null,
       proImagesUrl: null,
-      isToTop: false
+      isToTop: false,
+      addCartsList: null,
+      colorIndex: null,
+      colorIndexPa: null
     }
   },
   components: {
@@ -302,6 +309,83 @@ export default {
     window.removeEventListener('scroll', this.scrollHandle)
   },
   methods: {
+    findCid () {
+      let cartsStr = ''
+      this.attrList.forEach(item => {
+        item.attr.forEach(items => {
+          if (items.select) {
+            cartsStr += items.attributeValue
+          }
+        })
+      })
+      console.log(cartsStr)
+      let attributeid = Number
+      const skuBeanList = this.skuBeanList
+      skuBeanList.forEach(list => {
+        if (list.name === cartsStr) {
+          attributeid = parseInt(list.cid)
+        }
+      })
+      return attributeid
+    },
+    buyNow () {
+      if (this.$store.state.products.products.status === '3') {
+        this.$message.warning('抱歉，该宝贝已下架！')
+        return false
+      }
+      if (this.count === 0) {
+        this.$message.warning('抱歉，暂时无库存！')
+        return false
+      }
+      if (this.$store.state.products.products.status === '3' || this.count === 0) {
+        return false
+      } else {
+        const params = {
+          module: 'app_pc',
+          action: 'product',
+          m: 'immediately_cart',
+          access_id: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2MTUwMTM4NDQsImV4cCI6MTYxNTA1NzA0NCwianRpIjoiMGI0N2UzN2UwZGYyZjdmYTdlMDYzODU0NDNmYjE2OWQifQ.R0su61vqB8SaFICIAv7gNL5-Z0iGM1T9Edp090-NuQg',
+          product: [
+            JSON.stringify({ pid: this.$store.state.products.products.id }),
+            JSON.stringify({ cid: this.findCid() }),
+            JSON.stringify({ num: this.$refs.inputTag.value })
+          ],
+          language: null
+        }
+        api.buyNow(params).then(res => {
+          console.log(res)
+        })
+      }
+    },
+    addToShopCart () {
+      const params = {
+        module: 'app_pc',
+        action: 'product',
+        m: 'add_cart',
+        access_id: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2MTUwMTM4NDQsImV4cCI6MTYxNTA1NzA0NCwianRpIjoiMGI0N2UzN2UwZGYyZjdmYTdlMDYzODU0NDNmYjE2OWQifQ.R0su61vqB8SaFICIAv7gNL5-Z0iGM1T9Edp090-NuQg',
+        pro_id: this.$store.state.products.products.id,
+        num: this.$refs.inputTag.value,
+        attribute_id: this.findCid(),
+        language: null
+      }
+      if (this.$store.state.products.products.status === '3') {
+        this.$message.warning('抱歉，该宝贝已下架！')
+        return false
+      }
+      if (this.count === 0) {
+        this.$message.warning('抱歉，暂时无库存！')
+        return false
+      }
+      if (this.$store.state.products.products.status === '3' || this.count === 0) {
+        return false
+      } else {
+        api.addToShopCart(params).then(res => {
+          if (res.status === 200) {
+            this.$message.success('成功加入购物车！')
+          }
+        })
+      }
+    },
     all () {
       const type = 0
       this.getcomments(type)
@@ -329,7 +413,7 @@ export default {
       }
       var a = parseInt(document.documentElement.scrollTop)
       var p = parseInt(t - a)
-      console.log(t, a, p)
+      // console.log(t, a, p)
       if (p < -1) {
         tabNode[1].style.position = 'fixed'
         tabNode[1].style.top = '0'
@@ -405,11 +489,10 @@ export default {
       })
       liArr[this.currentIndex].style.border = '2px solid red'
     },
-    handleClickColor (item, itemPa) {
-      console.log(itemPa)
+    handleClickColor (item, itemPa, index, indexPa) {
       const skuBeanList = this.skuBeanList
       const clickItem = skuBeanList.find((items) => {
-        return items.name.includes(item)
+        return items.name.includes(item.attributeValue)
       })
       if (itemPa.attrName !== '尺码') {
         this.largeImg = clickItem.imgurl
@@ -417,10 +500,23 @@ export default {
       const target = window.event.currentTarget
       const siblingElements = target.parentNode.childNodes
       siblingElements.forEach(item => {
-        item.style.border = 'none'
+        item.style.border = '1px solid #DCDFE6'
+        item.style.color = '#000000A6'
       })
-      this.isDefault = false
+      // this.isDefault = false
       target.style.border = '1px solid #D3272D'
+      target.style.color = '#d3272d'
+      // console.log('index=', index, 'indexPa=', indexPa, item, itemPa)
+      itemPa.attr.forEach(it => {
+        if (item.attributeValue === it.attributeValue) {
+          item.select = true
+        } else {
+          it.select = false
+        }
+      })
+      console.log(this.attrList)
+      this.colorIndex = index
+      this.colorIndexPa = indexPa
     },
     handleclickImg (item, index) {
       this.currentIndex = index
@@ -441,22 +537,29 @@ export default {
         language: null
       }
       api.getProductsDetail(params).then(res => {
-        // if (res.status === 200) {
-        //   document.documentElement.scrollTop = 0
-        // }
         this.pro = res.data.data.pro
-        // this.getAttribute(this.pro)
         this.attrList = res.data.data.attrList
         const imgData = res.data.data.skuBeanList
         this.skuBeanList = imgData
         this.largeImg = imgData[0].imgurl
         this.count = parseInt(imgData[0].count)
+        if (this.count > 0) {
+          this.num = 1
+        } else {
+          this.num = 0
+        }
         this.couponStr = parseInt(res.data.data.coupon_str[0])
         this.proImgArr = res.data.data.pro.img_arr
         this.commenttotal = res.data.data.comments_num
         this.comments = '商品评价（' + res.data.data.comments_num + '）'
         this.shoplist = res.data.data.shop_list
         this.relatedRecommendations = res.data.data.related_recommendations
+        for (let i = 0; i < this.attrList.length; i++) {
+          for (let j = 0; j < this.attrList[i].attr.length; j++) {
+            this.attrList[i].attr[0].select = true
+          }
+        }
+        console.log(this.attrList)
       })
     },
     getCoupon () {
@@ -595,6 +698,23 @@ export default {
           img {
             width: 100%;
             height: 100%;
+          }
+          .coverContent {
+            font-size: 18px;
+            color: #ffffff;
+            line-height: 250px;
+            text-align: center;
+            position: absolute;
+            width: 250px;
+            height: 250px;
+            top: -70px;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            display: block;
+            margin: auto;
+            border-radius: 200px;
+            background-color: rgba(0, 0, 0, 0.4);
           }
         }
         .list-img {
@@ -756,14 +876,14 @@ export default {
             display: inline-block;
             width: calc(100% - 70px);
             height: 100%;
+            .stockClass {
+              color: #DCDFE6;
+              border: 1px solid #DCDFE6!important;
+              cursor: not-allowed!important;
+            }
             span {
               margin-bottom: 10px;
             }
-          }
-          .colorItemDefault {
-            box-sizing: border-box!important;
-            border: 1px solid #D3272D!important;
-            color: #d3272d;
           }
           .color-item {
             display: inline-block;
@@ -777,7 +897,12 @@ export default {
             cursor: pointer;
           }
           .color-item:hover {
+            border: 1px solid #D3272D!important;
+          }
+          .colorItemDefault {
+            box-sizing: border-box!important;
             border: 1px solid #D3272D;
+            color: #d3272d;
           }
         }
         .quantity {
@@ -869,12 +994,19 @@ export default {
             font-weight: bold;
             margin-left: 12px;
           }
+          .offShelfBuy {
+            cursor: not-allowed;
+          }
           .addToCart {
             height: 100%;
             width: 168px;
             font-weight: bold;
             background-color: #D4282D;
             border: none;
+          }
+          .offShelf {
+            background-color: rgba(255, 20, 42, 0.64) !important;
+            cursor: not-allowed!important;
           }
           .addToCart:hover {
             background-color: rgba(255, 20, 42, 0.64) !important;

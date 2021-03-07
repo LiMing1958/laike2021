@@ -22,9 +22,6 @@ service.interceptors.request.use(config => {
       'Content-Type': 'application/json'
     }
   }
-
-  console.log(config.headers)
-
   return config
 }, error => {
   Promise.reject(error)
