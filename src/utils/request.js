@@ -6,13 +6,7 @@ const service = axios.create({
   timeout: 3 * 1000
 })
 service.interceptors.request.use(config => {
-  // const user = {
-  //   access_id: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2MTIzMzc0MTAsImV4cCI6MTYxMjM4MDYxMCwianRpIjoiY2NjZDg2MmIxY2QzZDEyM2NiY2RkMGY0MDI2NWQ5NTQifQ.Okmp89OJPGtfjPGntbnEnhvCPe10OWT-PFhLyPkN31I'
-  // }
-  // localStorage.setItem('pc_user', JSON.stringify(user))
-  // location.pathname = '/PC/index.html'
   if (store.state.requestDataType) {
-    // 后台需要formData格式，所以需要用qs插件转换格式
     config.data = qs.stringify(config.data)
     config.headers = {
       'Content-Type': 'application/x-www-form-urlencoded'
