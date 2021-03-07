@@ -1,4 +1,5 @@
 export default {
+  isOpenChat: false,
   requestDataType: true,
   showPage: 'HomeList',
   secondTime: null,

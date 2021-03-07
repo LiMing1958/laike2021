@@ -19,8 +19,10 @@
         <a-icon type="message" />
         <span>消息</span>
         <i>|</i>
-        <span class="iconfont">&#xe600;</span>
-        <span>客服服务</span>
+        <span class="kefu" @click.stop="OpenChat" @mouseleave="handleAddClose" @mouseenter="handleRemoveClose">
+          <span class="iconfont">&#xe600;</span>
+          <span>客服服务</span>
+        </span>
         <i>|</i>
         <span class="iconfont">&#xe75c;</span>
         <span>下载APP</span>
@@ -30,12 +32,26 @@
 </template>
 
 <script>
+import mixin from '@/App'
 export default {
   name: 'headList',
+  mixins: [mixin],
   props: {
     msg: String
   },
   methods: {
+    OpenChat () {
+      this.$store.commit('setIsOpenChat', true)
+    },
+    handleRemoveClose () {
+      document.removeEventListener('click', this.handleAdd)
+    },
+    handleAddClose () {
+      document.addEventListener('click', this.handleAdd)
+    },
+    handleAdd () {
+      this.$store.commit('setIsOpenChat', false)
+    },
     toHome () {
       this.$store.commit('toHome', 'HomeList')
       this.$store.commit('setActiveKey', 0)
@@ -78,6 +94,11 @@ export default {
     }
     .header-right {
       float: right;
+      .kefu {
+        display: inline-block;
+        height: 36px;
+        width: 65px;
+      }
       .iconfont {
         font-size: 16px!important;
       }

@@ -6,6 +6,12 @@ export default {
   getProductsDetail (params) {
     return http.post('/index.php?store_id=1&store_type=6', params)
   },
+  buyNow (params) { // 立即购买
+    return http.post('/index.php?store_id=1&store_type=6', params)
+  },
+  addToShopCart (params) { // 加入购物车
+    return http.post('/index.php?store_id=1&store_type=6', params)
+  },
   getcomment (params) { // 获取商品性情页面的评论信息
     return http.post('/index.php?store_id=1&store_type=6', params)
   },

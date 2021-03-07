@@ -1,4 +1,7 @@
 export default {
+  setIsOpenChat (state, isChat) {
+    state.isOpenChat = isChat
+  },
   setRequestData (state, type) {
     state.requestDataType = type
   },

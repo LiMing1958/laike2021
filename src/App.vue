@@ -1,9 +1,9 @@
 <template>
   <div id="app">
     <router-view/>
-    <div class="toTop" v-show="isShowTop">
+    <div class="toTop" v-show="isShowTop" @mouseleave="addClose" @mouseenter="removeClose">
       <div class="Contact-Customer-Service">
-        <div class="Contact-Customer-Service-box" @click="handleOpenChat">
+        <div class="Contact-Customer-Service-box" @click.stop="handleOpenChat">
           <div>
             <!--          用阿里图标时必须设置class="iconfont"-->
             <span class="iconfont">&#xe600;</span>
@@ -37,14 +37,15 @@
         </div>
       </div>
     </div>
-    <div ref="chat" id="cha" class="chat-customer-server" v-show="isChat">
+    <div ref="chat" id="cha" class="chat-customer-server" v-show="$store.state.isOpenChat" @mouseleave="addClose" @mouseenter="removeClose" @click.stop="reKefu">
       <div class="title-nav">
         <p>给我们留言</p>
-        <span @click="[isChat = !isChat, isShowTop=!isShowTop, tel=null, messageContent=null]">
+        <span @click="XcloseOpenChat">
           <a-icon type="close" />
         </span>
       </div>
       <div class="chat-container" v-show="isChatcontainer">
+        <div v-show="isErrorText" class="ErrorText">{{submitResponstText}}</div>
         <div class="description-text">
           <p>您好，很抱歉我们暂时无法为您提供服务，如需帮助，请留言，我们将尽快联系并解决您的问题</p>
         </div>
@@ -61,7 +62,7 @@
           <textarea v-model="messageContent" placeholder="请输入留言内容"></textarea>
         </div>
         <div class="submit">
-          <a-button type="primary" style="width: 280px" @click="submit">
+          <a-button type="primary" style="width: 280px" @click.stop="submit">
             提交
           </a-button>
         </div>
@@ -69,7 +70,7 @@
       <div class="MessageSuccess" v-show="isShowMessageSuccess">
         <h1>留言成功</h1>
         <p>我们会尽快联系你</p>
-        <a-button type="primary" style="width: 180px;margin-top: 25px;" @click="[isChat=!isChat, isShowTop=!isShowTop]">
+        <a-button type="primary" style="width: 180px;margin-top: 25px;" @click="closeBtn">
           关闭
         </a-button>
         <p class="message-once-again" @click="handleMessageAgain">再次留言</p>
@@ -92,24 +93,45 @@ export default {
   mixins: [mixin],
   data () {
     return {
-      isChat: false,
       isShowTop: true,
       isChatcontainer: true,
       isShowMessageSuccess: false,
       tel: null,
-      messageContent: null
+      messageContent: null,
+      submitResponstText: null,
+      isErrorText: false
     }
   },
   methods: {
+    reKefu () {
+    },
+    removeClose () {
+      document.removeEventListener('click', this.handleCloseChat)
+    },
+    addClose () {
+      document.addEventListener('click', this.handleCloseChat)
+    },
+    handleCloseChat () {
+      this.$store.commit('setIsOpenChat', false)
+      this.isShowTop = true
+    },
+    XcloseOpenChat () { // 点击 X 关闭聊天窗口
+      this.$store.commit('setIsOpenChat', false)
+      this.isShowTop = true
+    },
     handleMessageAgain () {
       this.isChatcontainer = true
       this.isShowMessageSuccess = false
     },
     handleOpenChat () {
-      this.isChat = true
+      this.$store.commit('setIsOpenChat', true)
       this.isShowTop = false
       this.isShowMessageSuccess = false
       this.isChatcontainer = true
+    },
+    closeBtn () {
+      this.$store.commit('setIsOpenChat', false)
+      this.isShowTop = !this.isShowTop
     },
     submit () {
       this.$store.commit('setRequestData', false)
@@ -126,12 +148,19 @@ export default {
       }
       const this_ = this
       api.sendMessage(params).then(res => {
-        console.log(res.status)
         if (res.status === 201) {
-          this_.$store.commit('setRequestData', true)
+          // this_.$store.commit('setRequestData', true)
           this_.isChatcontainer = false
           this_.isShowMessageSuccess = true
+          this.tel = null
+          this.messageContent = null
         }
+      }).catch(() => {
+        this.isErrorText = true
+        this.submitResponstText = '工单流量达到上限'
+        setTimeout(() => {
+          this.isErrorText = false
+        }, 1500)
       })
     },
     handleScrollToTop () {
@@ -203,6 +232,16 @@ export default {
       position: relative;
       background: rgba(234, 235, 237, 0.8);
       overflow-y: auto;
+      .ErrorText {
+        width: 135px;
+        left: 100px;
+        top: 200px;
+        color: white;
+        position: absolute;
+        padding: 10px;
+        border-radius: 5px;
+        background-color: rgba(0, 0, 0, 0.4);
+      }
       .description-text {
         width: 100%;
         height: 64px;
@@ -260,7 +299,7 @@ export default {
     box-shadow: rgb(228, 228, 228) 0px 0px 5px 2px;
     position: fixed;
     bottom: 150px;
-    right: 90px;
+    right: 80px;
     cursor: pointer;
     .Contact-Customer-Service {
       width: 100%;
