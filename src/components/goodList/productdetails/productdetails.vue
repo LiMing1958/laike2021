@@ -345,15 +345,17 @@ export default {
           action: 'product',
           m: 'immediately_cart',
           access_id: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2MTUwMTM4NDQsImV4cCI6MTYxNTA1NzA0NCwianRpIjoiMGI0N2UzN2UwZGYyZjdmYTdlMDYzODU0NDNmYjE2OWQifQ.R0su61vqB8SaFICIAv7gNL5-Z0iGM1T9Edp090-NuQg',
-          product: [
-            JSON.stringify({ pid: this.$store.state.products.products.id }),
-            JSON.stringify({ cid: this.findCid() }),
-            JSON.stringify({ num: this.$refs.inputTag.value })
-          ],
+          product: JSON.stringify([
+            { pid: this.$store.state.products.products.id },
+            { cid: this.findCid() },
+            { num: this.$refs.inputTag.value }
+          ]),
           language: null
         }
         api.buyNow(params).then(res => {
-          console.log(res)
+          if (res.status === 200) {
+            this.$router.push('/login')
+          }
         })
       }
     },
