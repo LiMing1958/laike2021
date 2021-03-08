@@ -6,5 +6,6 @@ export default {
   endtime: null,
   activeKey: 0,
   products: null,
-  cartList: null
+  cartList: null,
+  loginStatus: 0
 }

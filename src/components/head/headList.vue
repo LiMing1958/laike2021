@@ -5,7 +5,7 @@
         <span @click="toHome">来客推商城欢迎您</span>
       </div>
       <div class="header-right">
-        <span>【登录】</span>
+        <span @click="$router.push('/login')">【登录】</span>
         <span>【注册】</span>
         <i>|</i>
         <span>我的订单</span>
@@ -25,7 +25,7 @@
         </span>
         <i>|</i>
         <span class="iconfont">&#xe75c;</span>
-        <span>下载APP</span>
+        <span><a style="color: #b8b8b8" href="http://app.laiketui.net/k5mr">下载APP</a></span>
       </div>
     </div>
   </div>

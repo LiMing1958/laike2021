@@ -354,7 +354,12 @@ export default {
         }
         api.buyNow(params).then(res => {
           if (res.status === 200) {
-            this.$router.push('/login')
+            if (this.$store.state.loginStatus === 0) {
+              this.$message.error('请先登录！')
+              this.$router.push('/login')
+            } else if (this.$store.state.loginStatus === 1) {
+              this.$message.success('恭喜您，抢购成功！')
+            }
           }
         })
       }

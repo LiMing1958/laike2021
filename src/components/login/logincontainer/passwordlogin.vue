@@ -1,74 +1,88 @@
 <template>
-  <a-form-model ref="ruleForm" :model="ruleForm" :rules="rules" v-bind="layout">
-    <a-form-model-item has-feedback label="Password" prop="pass">
-      <a-input v-model="ruleForm.pass" type="password" autocomplete="off" />
-    </a-form-model-item>
-    <a-form-model-item has-feedback label="Confirm" prop="checkPass">
-      <a-input v-model="ruleForm.checkPass" type="password" autocomplete="off" />
-    </a-form-model-item>
-    <a-form-model-item has-feedback label="Age" prop="age">
-      <a-input v-model.number="ruleForm.age" />
-    </a-form-model-item>
-    <a-form-model-item :wrapper-col="{ span: 14, offset: 4 }">
-      <a-button type="primary" @click="submitForm('ruleForm')">
-        Submit
-      </a-button>
-      <a-button style="margin-left: 10px" @click="resetForm('ruleForm')">
-        Reset
-      </a-button>
-    </a-form-model-item>
-  </a-form-model>
+  <div class="password-login-box">
+    <a-form-model ref="ruleForm" :model="ruleForm" :rules="rules" v-bind="layout">
+      <a-form-model-item has-feedback prop="tel">
+        <a-input v-model="ruleForm.tel" type="text" autocomplete="off" placeholder="账号/手机号" />
+      </a-form-model-item>
+      <a-form-model-item has-feedback prop="checkPass">
+        <a-input v-model="ruleForm.checkPass" type="password" autocomplete="off" placeholder="密码" />
+      </a-form-model-item>
+      <a-form-model-item has-feedback prop="VerificationCode">
+        <a-input style="width: 60%;" v-model.number="ruleForm.VerificationCode" placeholder="验证码"/>
+        <span class="yanzhengma" @click="$emit('getCodeImg')">
+          <img style="height: 100%;width: 100%;" :src="VerificationCodeUrl" alt="">
+        </span>
+      </a-form-model-item>
+      <a-form-model-item :wrapper-col="{ span: 14, offset: 0 }">
+        <a-button type="primary" style="width: 100%;height: 45px;background-color: #d4282d;border: none;margin-top: 20px;" @click="submitForm('ruleForm')">
+          登录
+        </a-button>
+      </a-form-model-item>
+    </a-form-model>
+    <div class="AutoLogin-ForgotPassword">
+      <div>
+        <input v-model="loginType" type="checkbox" name="login" id="login" style="margin-right: 8px;cursor: pointer;">
+        <label for="login" style="color: #999999">自动登录</label>
+        <span style="float: right;color: #999999;cursor: pointer">忘记密码</span>
+      </div>
+    </div>
+  </div>
 </template>
 <script>
+import api from '@/api/api'
 export default {
+  name: 'passwordlogin',
+  props: ['VerificationCodeUrl', 'code'],
   data () {
-    let checkPending
-    const checkAge = (rule, value, callback) => {
-      clearTimeout(checkPending)
-      if (!value) {
-        return callback(new Error('Please input the age'))
+    // 验证码
+    let TimerVirificationCode
+    const verificationcode = (rule, value, callback) => {
+      clearTimeout(TimerVirificationCode)
+      if (value === '') {
+        callback(new Error('请输入验证码'))
       }
-      checkPending = setTimeout(() => {
-        if (!Number.isInteger(value)) {
-          callback(new Error('Please input digits'))
+      TimerVirificationCode = setTimeout(() => {
+        if (value.toUpperCase() !== this.code) {
+          callback(new Error('输入的验证码有误，请重新输入'))
         } else {
-          if (value < 18) {
-            callback(new Error('Age must be greater than 18'))
-          } else {
-            callback()
-          }
+          callback()
         }
-      }, 1000)
+      }, 500)
     }
-    const validatePass = (rule, value, callback) => {
+    // 账号和手机号
+    const AccountMobile = (rule, value, callback) => {
       if (value === '') {
-        callback(new Error('Please input the password'))
+        callback(new Error('请输入账号或手机号'))
       } else {
-        if (this.ruleForm.checkPass !== '') {
-          this.$refs.ruleForm.validateField('checkPass')
-        }
         callback()
       }
     }
+
+    let timerPass
     const validatePass2 = (rule, value, callback) => {
+      clearTimeout(timerPass)
       if (value === '') {
-        callback(new Error('Please input the password again'))
-      } else if (value !== this.ruleForm.pass) {
-        callback(new Error("Two inputs don't match!"))
-      } else {
-        callback()
+        callback(new Error('请输入密码'))
       }
+      timerPass = setTimeout(() => {
+        if (value.toString().length < 6) {
+          callback(new Error('您输入的密码小数6位，请重新输入！'))
+        } else {
+          callback()
+        }
+      }, 500)
     }
     return {
+      loginType: false,
       ruleForm: {
-        pass: '',
+        tel: '',
         checkPass: '',
-        age: ''
+        VerificationCode: ''
       },
       rules: {
-        pass: [{ validator: validatePass, trigger: 'change' }],
+        tel: [{ validator: AccountMobile, trigger: 'change' }],
         checkPass: [{ validator: validatePass2, trigger: 'change' }],
-        age: [{ validator: checkAge, trigger: 'change' }]
+        VerificationCode: [{ validator: verificationcode, trigger: 'change' }]
       },
       layout: {
         labelCol: { span: 4 },
@@ -80,9 +94,24 @@ export default {
     submitForm (formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          alert('submit!')
+          const params = {
+            module: 'app_pc',
+            action: 'login',
+            m: 'login',
+            access_id: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2MTIzMzc0MTAsImV4cCI6MTYxMjM4MDYxMCwianRpIjoiY2NjZDg2MmIxY2QzZDEyM2NiY2RkMGY0MDI2NWQ5NTQifQ.Okmp89OJPGtfjPGntbnEnhvCPe10OWT-PFhLyPkN31I',
+            phone: this.ruleForm.tel,
+            password: this.ruleForm.checkPass,
+            imgCode: this.ruleForm.VerificationCode,
+            language: null
+          }
+          api.login(params).then(res => {
+            this.$emit('getCodeImg')
+            if (res.data.code) {
+              this.$message.error(res.data.message)
+            }
+            console.log(res.data.code)
+          })
         } else {
-          console.log('error submit!!')
           return false
         }
       })
@@ -94,9 +123,32 @@ export default {
 }
 </script>
 <style scoped lang="scss">
-.password-login-box {
+ .password-login-box {
   width: 100%;
   height: 100%;
-  /*background-color: #7efcff;*/
+   position: relative;
+   /*text-align: center;*/
+   .yanzhengma {
+     display: inline-block;
+     float: right;
+     width: 100px;
+     height: 45px;
+     cursor: pointer;
+     /*background-color: #36ff4d;*/
+   }
+   ::v-deep .ant-col-14 {
+    display: block;
+    box-sizing: border-box;
+    width: 100%;
+     .ant-input {
+       height: 45px;
+     }
+  }
+   .AutoLogin-ForgotPassword {
+     width: 100%;
+     height: 45px;
+     margin-top: -13px;
+     /*background-color: #ffa719;*/
+   }
 }
 </style>
