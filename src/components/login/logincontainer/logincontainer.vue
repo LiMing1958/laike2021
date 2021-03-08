@@ -80,6 +80,7 @@ export default {
   .form-list {
     width: 100%;
     height: calc(100% - 150px);
+    text-align: center;
     /*background-color: #e7fff3;*/
   }
   .footer {

@@ -1,25 +1,30 @@
 <template>
-  <a-form-model ref="ruleForm" :model="ruleForm" :rules="rules" v-bind="layout">
-    <a-form-model-item has-feedback label="Password" prop="pass">
-      <a-input v-model="ruleForm.pass" type="password" autocomplete="off" />
-    </a-form-model-item>
-    <a-form-model-item has-feedback label="Confirm" prop="checkPass">
-      <a-input v-model="ruleForm.checkPass" type="password" autocomplete="off" />
-    </a-form-model-item>
-    <a-form-model-item has-feedback label="Age" prop="age">
-      <a-input v-model.number="ruleForm.age" />
-    </a-form-model-item>
-    <a-form-model-item :wrapper-col="{ span: 14, offset: 4 }">
-      <a-button type="primary" @click="submitForm('ruleForm')">
-        Submit
-      </a-button>
-      <a-button style="margin-left: 10px" @click="resetForm('ruleForm')">
-        Reset
-      </a-button>
-    </a-form-model-item>
-  </a-form-model>
+  <div class="password-box">
+    <a-form-model ref="ruleForm" :model="ruleForm" :rules="rules" v-bind="layout">
+      <a-form-model-item has-feedback label="Password" prop="pass">
+        <a-input v-model="ruleForm.pass" type="password" />
+      </a-form-model-item>
+      <a-form-model-item has-feedback label="Confirm" prop="checkPass">
+        <a-input v-model="ruleForm.checkPass" type="password"/>
+      </a-form-model-item>
+      <a-form-model-item has-feedback label="Age" prop="age">
+        <a-input v-model.number="ruleForm.age" />
+      </a-form-model-item>
+      <a-form-model-item :wrapper-col="{ span: 14, offset: 4 }">
+        <a-button type="primary" @click="submitForm('ruleForm')">
+          Submit
+        </a-button>
+        <a-button style="margin-left: 10px" @click="resetForm('ruleForm')">
+          Reset
+        </a-button>
+      </a-form-model-item>
+    </a-form-model>
+  </div>
 </template>
 <script>
+import Vue from 'vue'
+import { FormModel } from 'ant-design-vue'
+Vue.use(FormModel)
 export default {
   data () {
     let checkPending
@@ -94,9 +99,11 @@ export default {
 }
 </script>
 <style scoped lang="scss">
-.password-login-box {
-  width: 100%;
-  height: 100%;
-  /*background-color: #7efcff;*/
-}
+  .password-box {
+    width: 100%;
+    height: 100%;
+    margin: 0 auto;
+    padding-left: 70px;
+    background-color: #69ffbb;
+  }
 </style>
