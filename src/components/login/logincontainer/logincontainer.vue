@@ -11,7 +11,7 @@
     </div>
     <div class="footer">
       <span>还不是会员？</span>
-      <span>立即注册</span>
+      <span @click="toRegister">立即注册</span>
     </div>
   </div>
 </template>
@@ -20,6 +20,7 @@
 import PasswordLogin from './passwordlogin'
 import VerificationCodeLogin from './verificationcodelogin'
 import api from '@/api/api'
+import event from '@/assets/js/event'
 export default {
   name: 'logincontainer',
   data () {
@@ -36,16 +37,17 @@ export default {
   },
   mounted () {
     this.getVerificationCode()
+    event.$on('getImg', this.getVerificationCode)
   },
   methods: {
     getVerificationCode () {
+      console.log(888)
       const params = {
         module: 'app_pc',
         action: 'login',
         m: 'get_code'
       }
       api.getVerificationCode(params).then(res => {
-        console.log('儿子')
         this.VerificationCodeUrl = 'https://v3pro.houjiemeishi.com/' + res.data.data.code_img
         this.code = res.data.data.code
       })
@@ -55,8 +57,12 @@ export default {
       this.fontweight = 1
     },
     VerificationCodeLogin () {
+      this.$store.commit('changeForgetPasswordShow', true)
       this.components = 'VerificationCodeLogin'
       this.fontweight = 0
+    },
+    toRegister () {
+      this.$store.commit('ChangeLoginComponent', 'register')
     }
   }
 }
@@ -66,11 +72,6 @@ export default {
 .longin-container-box {
   width: 100%;
   height: 100%;
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  bottom: 0;
   /*background-color: #93ff96;*/
   .header {
     width: 100%;

@@ -1,6 +1,8 @@
 <template>
   <div class="password-login-box">
     <a-form-model ref="ruleForm" :model="ruleForm" :rules="rules" v-bind="layout">
+      <slot name="register">
+      </slot>
       <a-form-model-item has-feedback prop="tel">
         <a-input v-model.number="ruleForm.tel" placeholder="请输入手机号"/>
       </a-form-model-item>
@@ -10,6 +12,8 @@
           获取验证码
         </span>
       </a-form-model-item>
+      <slot name="forgetPassword">
+      </slot>
       <a-form-model-item has-feedback prop="VerificationCode">
         <a-input style="width: 60%;" v-model.number="ruleForm.VerificationCode" placeholder="验证码"/>
         <span class="yanzhengma"  @click="$emit('getCodeImg')">
@@ -18,13 +22,13 @@
       </a-form-model-item>
       <a-form-model-item :wrapper-col="{ span: 14, offset: 0 }">
         <a-button type="primary" style="width: 100%;height: 45px;background-color: #d4282d;border: none;margin-top: 20px;" @click="submitForm('ruleForm')">
-          登录
+          {{$store.state.loginComponent === 'ForgetPassword' ? '保存' : '登录'}}
         </a-button>
       </a-form-model-item>
     </a-form-model>
     <div class="AutoLogin-ForgotPassword">
       <div>
-        <span style="float: right;color: #999999;cursor: pointer;">忘记密码</span>
+        <span style="float: right;color: #999999;cursor: pointer;" @click="forfetpasssword" v-show="$store.state.isShowForgetPassword">忘记密码</span>
       </div>
     </div>
   </div>
@@ -32,7 +36,7 @@
 <script>
 import api from '@/api/api'
 export default {
-  name: 'passwordlogin',
+  name: 'verificationcodelogin',
   props: ['VerificationCodeUrl', 'code'],
   data () {
     let checkPending
@@ -42,7 +46,6 @@ export default {
         return callback(new Error('请输入手机号'))
       }
       checkPending = setTimeout(() => {
-        console.log(11)
         if (!Number.isInteger(value)) {
           this.telStatus = false
           callback(new Error('请输入正确的手机号码'))
@@ -78,7 +81,6 @@ export default {
         callback(new Error('请输入手机验证码'))
       }
       timeCode = setTimeout(() => {
-        console.log('验证码')
         if (!Number.isInteger(value)) {
           callback(new Error('请输入正确的手机验证码'))
         } else if (value.toString().length !== 6) {
@@ -160,6 +162,9 @@ export default {
       } else {
         return false
       }
+    },
+    forfetpasssword () {
+      this.$store.commit('ChangeLoginComponent', 'ForgetPassword')
     }
   }
 }

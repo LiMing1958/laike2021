@@ -24,7 +24,7 @@
     </div>
     <div class="container">
       <div class="login-register-box">
-        <component :is="components"></component>
+        <component :is="$store.state.loginComponent" @forgetpassword="changecomponent"></component>
       </div>
     </div>
     <div class="footer">
@@ -47,16 +47,17 @@
 <script>
 import LoginContainer from './logincontainer/logincontainer'
 import register from './register/register'
+import ForgetPassword from './forgetPassword/forgetpassword'
 export default {
   name: 'login',
   data () {
     return {
-      components: 'LoginContainer'
     }
   },
   components: {
     LoginContainer,
-    register
+    register,
+    ForgetPassword
   },
   methods: {
     toHome () {
@@ -129,8 +130,7 @@ export default {
     margin: 0 auto;
     .login-register-box {
       width: 400px;
-      min-height: 545px;
-      position: relative;
+      min-height: 500px;
       background: rgba(255,255,255,1);
       /*background: rgb(79, 255, 179);*/
       box-shadow: 0px 2px 26px 0px rgba(81,84,92,0.16);

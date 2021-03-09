@@ -1,16 +1,12 @@
 <template>
   <div class="longin-container-box">
     <div class="header">
-     找回密码
+     找回密码 {{$store.state.setForgetSubmit}}
     </div>
     <div class="form-list">
       <a-form-model ref="ruleForm" :model="ruleForm" :rules="rules" v-bind="layout">
-        <a-form-model-item has-feedback prop="newPass">
-          <a-input style="height: 45px;" v-model.number="ruleForm.newPass" placeholder="设置密码（6-16位数的新密码）"/>
-        </a-form-model-item>
-        <a-form-model-item has-feedback prop="checkPass">
-          <a-input style="height: 45px;" v-model.number="ruleForm.checkPass" placeholder="再次输入密码"/>
-        </a-form-model-item>
+        <slot name="register">
+        </slot>
         <a-form-model-item has-feedback prop="tel">
           <a-input v-model.number="ruleForm.tel" placeholder="请输入手机号"/>
         </a-form-model-item>
@@ -20,9 +16,15 @@
           获取验证码
         </span>
         </a-form-model-item>
+        <a-form-model-item has-feedback prop="newPass">
+          <a-input style="height: 45px;" v-model.number="ruleForm.newPass" placeholder="设置密码（6-16位数的新密码）"/>
+        </a-form-model-item>
+        <a-form-model-item has-feedback prop="checkPass">
+          <a-input style="height: 45px;" v-model.number="ruleForm.checkPass" placeholder="再次输入密码"/>
+        </a-form-model-item>
         <a-form-model-item has-feedback prop="VerificationCode">
           <a-input style="width: 60%;" v-model.number="ruleForm.VerificationCode" placeholder="验证码"/>
-          <span class="yanzhengma"  @click="$emit('getCodeImg')">
+          <span class="yanzhengma" @click="getVerificationCode">
           <img style="height: 100%;width: 100%;" :src="VerificationCodeUrl" alt="">
         </span>
         </a-form-model-item>
@@ -41,6 +43,7 @@
 
 <script>
 import api from '@/api/api'
+import event from '@/assets/js/event'
 export default {
   name: 'logincontainer',
   data () {
@@ -160,9 +163,11 @@ export default {
     }
   },
   mounted () {
-    this.getVerificationCode()
   },
   methods: {
+    getVerificationCode () {
+      event.$emit('getImg')
+    },
     submitForm (formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
@@ -192,18 +197,18 @@ export default {
     resetForm (formName) {
       this.$refs[formName].resetFields()
     },
-    getVerificationCode () {
-      this.$store.commit('changeForgetPasswordShow', false)
-      const params = {
-        module: 'app_pc',
-        action: 'login',
-        m: 'get_code'
-      }
-      api.getVerificationCode(params).then(res => {
-        this.VerificationCodeUrl = 'https://v3pro.houjiemeishi.com/' + res.data.data.code_img
-        this.code = res.data.data.code
-      })
-    },
+    // getVerificationCode () {
+    //   this.$store.commit('changeForgetPasswordShow', false)
+    //   const params = {
+    //     module: 'app_pc',
+    //     action: 'login',
+    //     m: 'get_code'
+    //   }
+    //   api.getVerificationCode(params).then(res => {
+    //     this.VerificationCodeUrl = 'https://v3pro.houjiemeishi.com/' + res.data.data.code_img
+    //     this.code = res.data.data.code
+    //   })
+    // },
     getTelCode () {
       if (this.telStatus) {
         const params = {
