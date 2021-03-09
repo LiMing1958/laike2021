@@ -1,4 +1,10 @@
 export default {
+  changeForgetPasswordShow (state, isShowForgetPassword) {
+    state.isShowForgetPassword = isShowForgetPassword
+  },
+  ChangeLoginComponent (state, loginComponent) { // 登录页面组件切换
+    state.loginComponent = loginComponent
+  },
   setIsOpenChat (state, isChat) {
     state.isOpenChat = isChat
   },

@@ -23,7 +23,7 @@
       <div>
         <input v-model="loginType" type="checkbox" name="login" id="login" style="margin-right: 8px;cursor: pointer;">
         <label for="login" style="color: #999999">自动登录</label>
-        <span style="float: right;color: #999999;cursor: pointer" @click="forgetPassword">忘记密码</span>
+        <span style="float: right;color: #999999;cursor: pointer" @click="forfetpasssword">忘记密码</span>
       </div>
     </div>
   </div>
@@ -91,8 +91,6 @@ export default {
     }
   },
   methods: {
-    forgetPassword () {
-    },
     submitForm (formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
@@ -120,6 +118,9 @@ export default {
     },
     resetForm (formName) {
       this.$refs[formName].resetFields()
+    },
+    forfetpasssword () {
+      this.$store.commit('ChangeLoginComponent', 'ForgetPassword')
     }
   }
 }
