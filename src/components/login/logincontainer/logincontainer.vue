@@ -7,7 +7,7 @@
       </ul>
     </div>
     <div class="form-list">
-      <component :is="components"></component>
+      <component :is="components" :VerificationCodeUrl="VerificationCodeUrl" :code="code" @getCodeImg="getVerificationCode"></component>
     </div>
     <div class="footer">
       <span>还不是会员？</span>
@@ -19,19 +19,37 @@
 <script>
 import PasswordLogin from './passwordlogin'
 import VerificationCodeLogin from './verificationcodelogin'
+import api from '@/api/api'
 export default {
   name: 'logincontainer',
   data () {
     return {
       components: 'PasswordLogin',
-      fontweight: 1
+      fontweight: 1,
+      VerificationCodeUrl: null,
+      code: null
     }
   },
   components: {
     PasswordLogin,
     VerificationCodeLogin
   },
+  mounted () {
+    this.getVerificationCode()
+  },
   methods: {
+    getVerificationCode () {
+      const params = {
+        module: 'app_pc',
+        action: 'login',
+        m: 'get_code'
+      }
+      api.getVerificationCode(params).then(res => {
+        console.log('儿子')
+        this.VerificationCodeUrl = 'https://v3pro.houjiemeishi.com/' + res.data.data.code_img
+        this.code = res.data.data.code
+      })
+    },
     PasswordLogin () {
       this.components = 'PasswordLogin'
       this.fontweight = 1
@@ -78,17 +96,18 @@ export default {
     }
   }
   .form-list {
-    width: 100%;
+    width: 80%;
     height: calc(100% - 150px);
-    text-align: center;
+    margin: 0 auto;
     /*background-color: #e7fff3;*/
   }
   .footer {
     width: 100%;
-    height: 55px;
+    height: 61px;
+    font-size: 16px;
     position: absolute;
     text-align: center;
-    line-height: 55px;
+    line-height: 61px;
     bottom: 0;
     background-color: #f8f8f8;
     span:nth-child(1) {

@@ -87,6 +87,7 @@ export default {
           this.$message.error(
             res.data.message
           )
+          this.$router.push('/login')
         }
       })
     },

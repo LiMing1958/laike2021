@@ -3,19 +3,23 @@
     <div class="header">
       <div class="logo">
         <router-link to="/">
-          <div class="logo-img">
+          <div class="logo-img" @click="toHome">
             <img src="@/assets/images/logo.png" alt="">
           </div>
         </router-link>
         <div class="right-nav-msg">
-          <span>
+          <span @click="toHome">
+            <router-link to="/">
             <span class="icon-home"><a-icon type="home" /></span>
-            <span>商城首页</span>
+            <span class="icon-home">商城首页</span>
+            </router-link>
              <span class="fenge">|</span>
           </span>
           <span>
             <span class="iconfont">&#xe75c;</span>
-            <span>下载APP</span>
+            <span>
+              <a style="color: #666666" href="http://app.laiketui.net/k5mr">下载APP</a>
+            </span>
           </span>
         </div>
       </div>
@@ -55,6 +59,11 @@ export default {
   components: {
     LoginContainer,
     register
+  },
+  methods: {
+    toHome () {
+      this.$store.commit('toHome', 'HomeList')
+    }
   }
 }
 </script>
@@ -66,7 +75,8 @@ export default {
   background-color: rgb(241, 244, 250);
   .header {
     width: 100%;
-    height: 68px;
+    height: 80px;
+    line-height: 80px;
     position: fixed;
     top: 0;
     z-index: 999;
@@ -79,7 +89,7 @@ export default {
       .logo-img {
         width: 174px;
         height: 100%;
-        line-height: 68px;
+        line-height: 80px;
         /*background-color: #ff801c;*/
         float: left;
         img {
@@ -91,7 +101,7 @@ export default {
         width: 200px;
         height: 100%;
         float: right;
-        line-height: 67px;
+        line-height: 80px;
         font-size: 16px;
         color: #666666;
         text-align: center;
@@ -100,6 +110,7 @@ export default {
           margin-right: 5px;
         }
         .icon-home {
+          color: #666666;
           margin-right: 5px;
         }
         .fenge {
@@ -114,18 +125,19 @@ export default {
     width: 1000px;
     height: 100%;
     background: url('../../assets/images/login_bg1.png') no-repeat;
-    background-size: 55%;
-    /*background-position-x: 28%;*/
-    background-position-y: 50%;
+    background-size: 65%;
+    background-position-x: -17.2%;
+    background-position-y: 48.5%;
     margin: 0 auto;
     .login-register-box {
-      width: 330px;
-      min-height: 500px;
+      width: 400px;
+      min-height: 545px;
       position: relative;
       background: rgba(255,255,255,1);
+      /*background: rgb(79, 255, 179);*/
       box-shadow: 0px 2px 26px 0px rgba(81,84,92,0.16);
       position: absolute;
-      right: 20%;
+      right: 24%;
       top: 50%;
       z-index: 1000;
       transform: translateY(-50%);
@@ -133,7 +145,7 @@ export default {
   }
   .footer {
     width: 100%;
-    height: 65px;
+    height: 88px;
     background-color: #fff;
     display: flex;
     justify-content: center;
@@ -144,14 +156,15 @@ export default {
       font-size: 12px;
       text-align: center;
       p {
-        color: #888888
+        color: #888888;
+        margin-top: 5px;
       }
       li {
         display: inline-block;
         color: #666666;
-        margin-bottom: 10px;
+        margin-bottom: 12px;
         border-right: 1px solid #666666;
-        padding: 0 5px;
+        padding: 0 8px;
         cursor: pointer;
         &:last-child {
           border-right: none;

@@ -1,5 +1,17 @@
 import http from '../utils/http'
 export default {
+  codeLogin (params) { // 手机验证码登录
+    return http.post('/index.php?store_id=1&store_type=6', params)
+  },
+  login (params) { // 密码登录
+    return http.post('/index.php?store_id=1&store_type=6', params)
+  },
+  getTelCode (params) {
+    return http.post('/index.php?store_id=1&store_type=6', params)
+  },
+  getVerificationCode (params) { // 登录界面获取验证码
+    return http.post('/index.php?store_id=1&store_type=6', params)
+  },
   deleteSearchHistory (params) {
     return http.post('/index.php?store_id=1&store_type=6', params)
   },

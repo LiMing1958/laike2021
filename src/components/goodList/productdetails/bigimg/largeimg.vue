@@ -77,17 +77,6 @@ export default {
       // 设置 position 偏移量
       this.$refs.bigimg.style.left = -bigImageX + 'px'
       this.$refs.bigimg.style.top = -bigImageY + 'px'
-
-      // // 3、当mask移动的时侯，让大图片big移动；
-      // // 公式：mask的移动距离 / mask的最大移动距离 = 大图的移动距离 / 大图最大的移动距离；
-      // var maskMax = $("#box1")[0].offsetWidth - $("#mas")[0].offsetWidth;
-      // // 定义大图最大的移动距离
-      // var bigImageMax = $("#bigImage")[0].offsetWidth - $("#bi")[0].offsetWidth;
-      // // 算出大图的移动距离
-      // var bigImageX = maskX * bigImageMax / maskMax;
-      // var bigImageY = maskY * bigImageMax / maskMax;
-      // $("#bigImage")[0].style.left = -bigImageX + 'px';
-      // $("#bigImage")[0].style.top = -bigImageY + 'px';
     }
   }
 }
