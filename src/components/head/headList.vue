@@ -5,8 +5,8 @@
         <span @click="toHome">来客推商城欢迎您</span>
       </div>
       <div class="header-right">
-        <span @click="$router.push('/login')">【登录】</span>
-        <span>【注册】</span>
+        <span @click="[$router.push('/login'), $store.commit('ChangeLoginComponent', 'LoginContainer')]">【登录】</span>
+        <span @click="[$router.push('/login'), $store.commit('ChangeLoginComponent', 'register')]">【注册】</span>
         <i>|</i>
         <span>我的订单</span>
         <i>|</i>

@@ -1,4 +1,7 @@
 export default {
+  sendverificationcode (state, obj) { // 向忘记密码兄弟组件传值
+    state.sengForgetCodeObj = obj
+  },
   changeForgetPasswordShow (state, isShowForgetPassword) {
     state.isShowForgetPassword = isShowForgetPassword
   },

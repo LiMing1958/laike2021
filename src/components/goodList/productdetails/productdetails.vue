@@ -151,11 +151,33 @@
           </span>
         </div>
         <div class="shareBox">
+          <a-modal v-model="visibleShare"
+                   :footer="null"
+                   width="25%"
+                   height="400px"
+                   :centered=true
+                   destroyOnClose="true">
+            <div style="text-align: center;padding-top: 25px;display: flex;
+                          align-items: center;
+                          justify-content: center">
+              <div style="width: 200px;
+                          height: 220px;
+                          padding-top: 15px;
+                          background-color: #fff;">
+                <img class="modal-code" src="@/assets/images/H5.png"/>
+                <h2 style="font-weight: bold!important;
+                              color: #000000!important;
+                              padding-top: 20px!important;">
+                  扫码进入来客电商H5
+                </h2>
+              </div>
+            </div>
+          </a-modal>
           <span>分享</span>
-          <span class="iconfont">
+          <span class="iconfont" @click="visibleShare=!visibleShare">
             &#xe65b;
           </span>
-          <span class="iconfont">
+          <span class="iconfont" @click="visibleShare=!visibleShare">
             &#xe659;
           </span>
         </div>
@@ -265,6 +287,7 @@ export default {
     return {
       items: null,
       visible: false,
+      visibleShare: false,
       current: 1,
       length: 1,
       commentvisible: false,
@@ -355,6 +378,7 @@ export default {
         api.buyNow(params).then(res => {
           if (res.status === 200) {
             if (this.$store.state.loginStatus === 0) {
+              this.$store.commit('ChangeLoginComponent', 'LoginContainer')
               this.$message.error('请先登录！')
               this.$router.push('/login')
             } else if (this.$store.state.loginStatus === 1) {

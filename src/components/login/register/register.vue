@@ -1,15 +1,15 @@
 <template>
   <div class="longin-container-box">
     <div class="header">
-     找回密码
+     用户注册
     </div>
     <div class="form-list">
       <a-form-model ref="ruleForm" :model="ruleForm" :rules="rules" v-bind="layout">
         <a-form-model-item has-feedback prop="newPass">
-          <a-input style="height: 45px;" v-model.number="ruleForm.newPass" placeholder="设置密码（6-16位数的新密码）"/>
+          <a-input style="height: 45px;" v-model.number="ruleForm.newPass" placeholder="设置账号（6-15位字母或数字）"/>
         </a-form-model-item>
         <a-form-model-item has-feedback prop="checkPass">
-          <a-input style="height: 45px;" v-model.number="ruleForm.checkPass" placeholder="再次输入密码"/>
+          <a-input style="height: 45px;" v-model.number="ruleForm.checkPass" placeholder="设置密码（6-16位数的新密码）"/>
         </a-form-model-item>
         <a-form-model-item has-feedback prop="tel">
           <a-input v-model.number="ruleForm.tel" placeholder="请输入手机号"/>
@@ -22,13 +22,28 @@
         </a-form-model-item>
         <a-form-model-item has-feedback prop="VerificationCode">
           <a-input style="width: 60%;" v-model.number="ruleForm.VerificationCode" placeholder="验证码"/>
-          <span class="yanzhengma"  @click="$emit('getCodeImg')">
-          <img style="height: 100%;width: 100%;" :src="VerificationCodeUrl" alt="">
+          <span class="yanzhengma" @click="$emit('getCode')">
+          <img style="height: 100%;width: 100%;" :src="$store.state.sengForgetCodeObj.codeUrl" alt="">
         </span>
         </a-form-model-item>
+        <div class="AutoLogin-ForgotPassword">
+          <div class="xieyi">
+            <input v-model="agreeRegistrationAgreement" type="checkbox" name="login" id="register" style="margin-right: 8px;cursor: pointer;">
+            <label for="register" style="color: #999999;cursor: pointer;">注册代表你同意</label>
+            <span style="cursor: pointer;color: #999999" @click="getRegistrationAgreement">《来客注册协议》</span>
+            <a-modal v-model="visible"
+                     title="来客注册协议"
+                     :footer="null"
+                     width="762px"
+                     destroyOnClose="true">
+              <div class="content-text" v-html="RegistrationAgreement">
+              </div>
+            </a-modal>
+          </div>
+        </div>
         <a-form-model-item :wrapper-col="{ span: 14, offset: 0 }">
-          <a-button type="primary" style="width: 100%;height: 45px;background-color: #d4282d;border: none;margin-top: 20px;" @click="submitForm('ruleForm')">
-            {{$store.state.loginComponent === 'ForgetPassword' ? '保存' : '登录'}}
+          <a-button type="primary" style="font-weight: bold;width: 100%;height: 45px;background-color: #d4282d;border: none;margin-top: 20px;" @click="submitForm('ruleForm')">
+            注册
           </a-button>
         </a-form-model-item>
       </a-form-model>
@@ -49,15 +64,12 @@ export default {
     const validatePass2 = (rule, value, callback) => {
       clearTimeout(timerPass)
       if (value === '') {
-        this.$store.commit('setForgetSubmit', 0)
         callback(new Error('请输入密码'))
       }
       timerPass = setTimeout(() => {
         if (value.toString().length < 6 || value.toString().length > 16) {
-          this.$store.commit('setForgetSubmit', 0)
           callback(new Error('请输入6-16位数密码'))
         } else {
-          this.$store.commit('setForgetSubmit', 1)
           callback()
         }
       }, 500)
@@ -67,16 +79,12 @@ export default {
     const validatePass = (rule, value, callback) => {
       clearTimeout(validatePassword)
       if (value === '') {
-        this.$store.commit('setForgetSubmit', 0)
         callback(new Error('请再次输入新密码！'))
       }
-      TimerVirificationCode = setTimeout(() => {
+      validatePassword = setTimeout(() => {
         if (this.ruleForm.checkPass !== this.ruleForm.newPass) {
-          console.log('定时状态', this.$store.state.setForgetSubmit)
-          this.$store.commit('setForgetSubmit', 0)
           callback(new Error('两次输入的密码不一致，请重新输入！'))
         } else {
-          this.$store.commit('setForgetSubmit', 0)
           callback()
         }
       }, 800)
@@ -109,7 +117,7 @@ export default {
         callback(new Error('请输入验证码'))
       }
       TimerVirificationCode = setTimeout(() => {
-        if (value.toUpperCase() !== this.code) {
+        if (value.toUpperCase() !== this.$store.state.sengForgetCodeObj.imgCode) {
           callback(new Error('输入的验证码有误，请重新输入'))
         } else {
           callback()
@@ -133,6 +141,9 @@ export default {
       }, 500)
     }
     return {
+      visible: false,
+      agreeRegistrationAgreement: false,
+      RegistrationAgreement: null,
       component: 'VerificationCodeLogin',
       fontweight: 1,
       VerificationCodeUrl: null,
@@ -160,49 +171,53 @@ export default {
     }
   },
   mounted () {
-    this.getVerificationCode()
   },
   methods: {
     submitForm (formName) {
-      this.$refs[formName].validate(valid => {
-        if (valid) {
-          const params = {
-            module: 'app_pc',
-            action: 'login',
-            m: 'forgotpassword',
-            phone: this.ruleForm.tel,
-            keyCode: this.ruleForm.PhoneVerificationCode,
-            password: this.ruleformdata.checkPass,
-            language: null
+      if (this.agreeRegistrationAgreement) {
+        this.$refs[formName].validate(valid => {
+          if (valid) {
+            const params = {
+              module: 'app_pc',
+              action: 'login',
+              m: 'user_register',
+              phone: this.ruleForm.tel,
+              imgCode: this.$store.state.sengForgetCodeObj.imgCode,
+              keyCode: this.ruleForm.PhoneVerificationCode,
+              password: this.ruleForm.checkPass,
+              language: null
+            }
+            api.forgetPassword(params).then(res => {
+              if (res.data.code === 113) {
+                this.$message.error(res.data.message)
+              } else if (res.data.code === 217) {
+                this.$message.error(res.data.message)
+              } else if (res.data.code === 103) {
+                this.$message.error(res.data.message)
+              } else {}
+            })
+          } else {
+            return false
           }
-          api.forgetPassword(params).then(res => {
-            if (res.data.code === 113) {
-              this.$message.error(res.data.message)
-            } else if (res.data.code === 217) {
-              this.$message.error(res.data.message)
-            } else if (res.data.code === 103) {
-              this.$message.error(res.data.message)
-            } else {}
-          })
-        } else {
-          return false
-        }
-      })
+        })
+      } else {
+        this.$message.error('请勾选注册协议')
+      }
     },
     resetForm (formName) {
       this.$refs[formName].resetFields()
     },
-    getVerificationCode () {
-      this.$store.commit('changeForgetPasswordShow', false)
+    getRegistrationAgreement () {
       const params = {
         module: 'app_pc',
         action: 'login',
-        m: 'get_code'
+        m: 'register_agreement'
       }
-      api.getVerificationCode(params).then(res => {
-        this.VerificationCodeUrl = 'https://v3pro.houjiemeishi.com/' + res.data.data.code_img
-        this.code = res.data.data.code
+      api.getRegistrationAgreement(params).then(res => {
+        console.log(res.data)
+        this.RegistrationAgreement = res.data.data.content
       })
+      this.visible = !this.visible
     },
     getTelCode () {
       if (this.telStatus) {
@@ -233,6 +248,12 @@ export default {
 </script>
 
 <style scoped lang="scss">
+ ::v-deep .ant-modal-body {
+   overflow-y: scroll;
+ }
+ ::v-deep .ant-modal {
+    top: 141px!important;
+  }
 .longin-container-box {
   width: 100%;
   height: 100%;
@@ -275,6 +296,10 @@ export default {
     width: 80%;
     /*height: calc(100% - 150px);*/
     margin: 0 auto;
+    .AutoLogin-ForgotPassword {
+      width: 100%;
+      padding-bottom: 10px;
+    }
   }
   .footer {
     width: 100%;

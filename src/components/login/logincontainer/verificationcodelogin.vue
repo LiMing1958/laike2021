@@ -16,8 +16,8 @@
       </slot>
       <a-form-model-item has-feedback prop="VerificationCode">
         <a-input style="width: 60%;" v-model.number="ruleForm.VerificationCode" placeholder="验证码"/>
-        <span class="yanzhengma"  @click="$emit('getCodeImg')">
-          <img style="height: 100%;width: 100%;" :src="VerificationCodeUrl" alt="">
+        <span class="yanzhengma"  @click="$emit('getCodeObj')">
+          <img style="height: 100%;width: 100%;" :src="$store.state.sengForgetCodeObj.codeUrl" alt="">
         </span>
       </a-form-model-item>
       <a-form-model-item :wrapper-col="{ span: 14, offset: 0 }">
@@ -67,7 +67,7 @@ export default {
         callback(new Error('请输入验证码'))
       }
       TimerVirificationCode = setTimeout(() => {
-        if (value.toUpperCase() !== this.code) {
+        if (value.toUpperCase() !== this.$store.state.sengForgetCodeObj.imgCode) {
           callback(new Error('输入的验证码有误，请重新输入'))
         } else {
           callback()

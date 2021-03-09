@@ -9,12 +9,12 @@
       </a-form-model-item>
       <a-form-model-item has-feedback prop="VerificationCode">
         <a-input style="width: 60%;" v-model.number="ruleForm.VerificationCode" placeholder="验证码"/>
-        <span class="yanzhengma" @click="$emit('getCodeImg')">
-          <img style="height: 100%;width: 100%;" :src="VerificationCodeUrl" alt="">
+        <span class="yanzhengma" @click="$emit('getCodeObj')">
+          <img style="height: 100%;width: 100%;" :src="$store.state.sengForgetCodeObj.codeUrl" alt="">
         </span>
       </a-form-model-item>
       <a-form-model-item :wrapper-col="{ span: 14, offset: 0 }">
-        <a-button type="primary" style="width: 100%;height: 45px;background-color: #d4282d;border: none;margin-top: 20px;" @click="submitForm('ruleForm')">
+        <a-button type="primary" style="font-weight: bold;width: 100%;height: 45px;background-color: #d4282d;border: none;margin-top: 20px;" @click="submitForm('ruleForm')">
           登录
         </a-button>
       </a-form-model-item>
@@ -22,7 +22,7 @@
     <div class="AutoLogin-ForgotPassword">
       <div>
         <input v-model="loginType" type="checkbox" name="login" id="login" style="margin-right: 8px;cursor: pointer;">
-        <label for="login" style="color: #999999">自动登录</label>
+        <label for="login" style="color: #999999;cursor: pointer;">自动登录</label>
         <span style="float: right;color: #999999;cursor: pointer" @click="forfetpasssword">忘记密码</span>
       </div>
     </div>
@@ -42,7 +42,7 @@ export default {
         callback(new Error('请输入验证码'))
       }
       TimerVirificationCode = setTimeout(() => {
-        if (value.toUpperCase() !== this.code) {
+        if (value.toUpperCase() !== this.$store.state.sengForgetCodeObj.imgCode) {
           callback(new Error('输入的验证码有误，请重新输入'))
         } else {
           callback()

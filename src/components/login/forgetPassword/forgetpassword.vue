@@ -1,12 +1,10 @@
 <template>
   <div class="longin-container-box">
     <div class="header">
-     找回密码 {{$store.state.setForgetSubmit}}
+     找回密码
     </div>
     <div class="form-list">
       <a-form-model ref="ruleForm" :model="ruleForm" :rules="rules" v-bind="layout">
-        <slot name="register">
-        </slot>
         <a-form-model-item has-feedback prop="tel">
           <a-input v-model.number="ruleForm.tel" placeholder="请输入手机号"/>
         </a-form-model-item>
@@ -25,12 +23,12 @@
         <a-form-model-item has-feedback prop="VerificationCode">
           <a-input style="width: 60%;" v-model.number="ruleForm.VerificationCode" placeholder="验证码"/>
           <span class="yanzhengma" @click="getVerificationCode">
-          <img style="height: 100%;width: 100%;" :src="VerificationCodeUrl" alt="">
+          <img style="height: 100%;width: 100%;" :src="$store.state.sengForgetCodeObj.codeUrl" alt="">
         </span>
         </a-form-model-item>
         <a-form-model-item :wrapper-col="{ span: 14, offset: 0 }">
-          <a-button type="primary" style="width: 100%;height: 45px;background-color: #d4282d;border: none;margin-top: 20px;" @click="submitForm('ruleForm')">
-            {{$store.state.loginComponent === 'ForgetPassword' ? '保存' : '登录'}}
+          <a-button type="primary" style="font-weight: bold;width: 100%;height: 45px;background-color: #d4282d;border: none;margin-top: 20px;" @click="submitForm('ruleForm')">
+            保存
           </a-button>
         </a-form-model-item>
       </a-form-model>
@@ -43,7 +41,6 @@
 
 <script>
 import api from '@/api/api'
-import event from '@/assets/js/event'
 export default {
   name: 'logincontainer',
   data () {
@@ -52,15 +49,12 @@ export default {
     const validatePass2 = (rule, value, callback) => {
       clearTimeout(timerPass)
       if (value === '') {
-        this.$store.commit('setForgetSubmit', 0)
         callback(new Error('请输入密码'))
       }
       timerPass = setTimeout(() => {
         if (value.toString().length < 6 || value.toString().length > 16) {
-          this.$store.commit('setForgetSubmit', 0)
           callback(new Error('请输入6-16位数密码'))
         } else {
-          this.$store.commit('setForgetSubmit', 1)
           callback()
         }
       }, 500)
@@ -70,16 +64,12 @@ export default {
     const validatePass = (rule, value, callback) => {
       clearTimeout(validatePassword)
       if (value === '') {
-        this.$store.commit('setForgetSubmit', 0)
         callback(new Error('请再次输入新密码！'))
       }
-      TimerVirificationCode = setTimeout(() => {
+      validatePassword = setTimeout(() => {
         if (this.ruleForm.checkPass !== this.ruleForm.newPass) {
-          console.log('定时状态', this.$store.state.setForgetSubmit)
-          this.$store.commit('setForgetSubmit', 0)
           callback(new Error('两次输入的密码不一致，请重新输入！'))
         } else {
-          this.$store.commit('setForgetSubmit', 0)
           callback()
         }
       }, 800)
@@ -112,7 +102,7 @@ export default {
         callback(new Error('请输入验证码'))
       }
       TimerVirificationCode = setTimeout(() => {
-        if (value.toUpperCase() !== this.code) {
+        if (value.toUpperCase() !== this.$store.state.sengForgetCodeObj.imgCode) {
           callback(new Error('输入的验证码有误，请重新输入'))
         } else {
           callback()
@@ -139,9 +129,9 @@ export default {
       component: 'VerificationCodeLogin',
       fontweight: 1,
       VerificationCodeUrl: null,
-      code: null,
-      loginType: false,
       telStatus: true,
+      verificationCodeObj: null,
+      codeUrl: null,
       ruleForm: {
         newPass: '',
         checkPass: '',
@@ -166,7 +156,7 @@ export default {
   },
   methods: {
     getVerificationCode () {
-      event.$emit('getImg')
+      this.$emit('getCode')
     },
     submitForm (formName) {
       this.$refs[formName].validate(valid => {
@@ -177,7 +167,7 @@ export default {
             m: 'forgotpassword',
             phone: this.ruleForm.tel,
             keyCode: this.ruleForm.PhoneVerificationCode,
-            password: this.ruleformdata.checkPass,
+            password: this.ruleForm.checkPass,
             language: null
           }
           api.forgetPassword(params).then(res => {
@@ -197,31 +187,19 @@ export default {
     resetForm (formName) {
       this.$refs[formName].resetFields()
     },
-    // getVerificationCode () {
-    //   this.$store.commit('changeForgetPasswordShow', false)
-    //   const params = {
-    //     module: 'app_pc',
-    //     action: 'login',
-    //     m: 'get_code'
-    //   }
-    //   api.getVerificationCode(params).then(res => {
-    //     this.VerificationCodeUrl = 'https://v3pro.houjiemeishi.com/' + res.data.data.code_img
-    //     this.code = res.data.data.code
-    //   })
-    // },
     getTelCode () {
       if (this.telStatus) {
         const params = {
-          module: 'app',
-          action: 'user',
-          app: 'secret_key',
+          module: 'app_pc',
+          action: 'login',
+          m: 'forget_zhanghao',
           phone: this.ruleForm.tel
         }
         api.getTelCode(params).then(res => {
           if (res.data.code === 200) {
             this.$message.success('发送成功，请输入手机验证码！')
           } else
-          if (res.data.code === 220) {
+          if (res.data.code === 113) {
             this.$message.error(res.data.message)
           }
           console.log(res)

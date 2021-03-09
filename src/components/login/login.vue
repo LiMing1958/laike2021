@@ -3,7 +3,7 @@
     <div class="header">
       <div class="logo">
         <router-link to="/">
-          <div class="logo-img">
+          <div class="logo-img" @click="toHome">
             <img src="@/assets/images/logo.png" alt="">
           </div>
         </router-link>
@@ -17,14 +17,16 @@
           </span>
           <span>
             <span class="iconfont">&#xe75c;</span>
-            <span>下载APP</span>
+            <span>
+              <a style="color: #666666" href="http://app.laiketui.net/k5mr">下载APP</a>
+            </span>
           </span>
         </div>
       </div>
     </div>
     <div class="container">
       <div class="login-register-box">
-        <component :is="$store.state.loginComponent" @forgetpassword="changecomponent"></component>
+        <component :is="$store.state.loginComponent" @forgetpassword="changecomponent" @getCode="getVerificationCode"></component>
       </div>
     </div>
     <div class="footer">
@@ -45,6 +47,7 @@
 </template>
 
 <script>
+import api from '@/api/api'
 import LoginContainer from './logincontainer/logincontainer'
 import register from './register/register'
 import ForgetPassword from './forgetPassword/forgetpassword'
@@ -59,7 +62,22 @@ export default {
     register,
     ForgetPassword
   },
+  mounted () {
+    this.getVerificationCode()
+  },
   methods: {
+    getVerificationCode () {
+      const params = {
+        module: 'app_pc',
+        action: 'login',
+        m: 'get_code'
+      }
+      api.getVerificationCode(params).then(res => {
+        const VerificationCodeUrl = 'https://v3pro.houjiemeishi.com/' + res.data.data.code_img
+        const code = res.data.data.code
+        this.$store.commit('sendverificationcode', { imgCode: code, codeUrl: VerificationCodeUrl })
+      })
+    },
     toHome () {
       this.$store.commit('toHome', 'HomeList')
     }
@@ -131,6 +149,7 @@ export default {
     .login-register-box {
       width: 400px;
       min-height: 500px;
+      padding-bottom: 35px;
       background: rgba(255,255,255,1);
       /*background: rgb(79, 255, 179);*/
       box-shadow: 0px 2px 26px 0px rgba(81,84,92,0.16);

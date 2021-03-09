@@ -1,7 +1,7 @@
 <template>
   <div class="logoTitle">
     <div class="logo-img">
-      <img class="imgContain" src="../../assets/images/logo.png" alt="logo">
+      <img class="imgContain" src="../../assets/images/logo.png" alt="logo" @click="reload">
       <div class="searchList" v-show="visibleSearch" @mouseleave="addClose" @mouseenter="removeClose">
         <div class="inputBox">
           <input type="text" v-model="searchText" placeholder="搜索商品、品牌">
@@ -63,6 +63,9 @@ export default {
     this.getSearchList()
   },
   methods: {
+    reload () {
+      location.reload()
+    },
     removeClose () {
       document.removeEventListener('click', this.handleClose)
     },
@@ -170,6 +173,7 @@ export default {
       text-align: center;
       .imgContain {
         margin-left: 80px;
+        cursor: pointer;
       }
       .searchList {
         width: 300px;
