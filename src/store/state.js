@@ -9,5 +9,6 @@ export default {
   cartList: null,
   loginStatus: 0,
   loginComponent: 'LoginContainer',
-  isShowForgetPassword: true
+  isShowForgetPassword: true,
+  sengForgetCodeObj: null
 }

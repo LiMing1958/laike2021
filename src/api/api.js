@@ -1,5 +1,8 @@
 import http from '../utils/http'
 export default {
+  getRegistrationAgreement (params) { // 获取注册协议
+    return http.post('/index.php?store_id=1&store_type=6', params)
+  },
   forgetPassword (params) { // 手机验证码登录
     return http.post('/index.php?store_id=1&store_type=6', params)
   },

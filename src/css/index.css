@@ -39,6 +39,7 @@
 }
 .ant-modal-body {
     min-height: 330px;
+    max-height: 600px;
     padding-top: 60px;
     /*display: flex;*/
     /*align-items: center;*/
@@ -65,7 +66,7 @@ body {
     height: auto;
 }
 .ant-message {
-    margin-top: 30px;
+    margin-top: 20px;
 }
 .ant-message-success {
     display: inline-block;

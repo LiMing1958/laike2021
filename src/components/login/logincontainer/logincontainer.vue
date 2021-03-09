@@ -7,7 +7,7 @@
       </ul>
     </div>
     <div class="form-list">
-      <component :is="components" :VerificationCodeUrl="VerificationCodeUrl" :code="code" @getCodeImg="getVerificationCode"></component>
+      <component :is="components" :VerificationCodeUrl="VerificationCodeUrl" :code="code" @getCodeObj="$emit('getCode')"></component>
     </div>
     <div class="footer">
       <span>还不是会员？</span>
@@ -19,8 +19,6 @@
 <script>
 import PasswordLogin from './passwordlogin'
 import VerificationCodeLogin from './verificationcodelogin'
-import api from '@/api/api'
-import event from '@/assets/js/event'
 export default {
   name: 'logincontainer',
   data () {
@@ -36,22 +34,8 @@ export default {
     VerificationCodeLogin
   },
   mounted () {
-    this.getVerificationCode()
-    event.$on('getImg', this.getVerificationCode)
   },
   methods: {
-    getVerificationCode () {
-      console.log(888)
-      const params = {
-        module: 'app_pc',
-        action: 'login',
-        m: 'get_code'
-      }
-      api.getVerificationCode(params).then(res => {
-        this.VerificationCodeUrl = 'https://v3pro.houjiemeishi.com/' + res.data.data.code_img
-        this.code = res.data.data.code
-      })
-    },
     PasswordLogin () {
       this.components = 'PasswordLogin'
       this.fontweight = 1
