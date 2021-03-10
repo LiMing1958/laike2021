@@ -46,7 +46,8 @@ export default {
         module: 'app_pc',
         action: 'index',
         m: 'index',
-        access_id: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2MTIzMzc0MTAsImV4cCI6MTYxMjM4MDYxMCwianRpIjoiY2NjZDg2MmIxY2QzZDEyM2NiY2RkMGY0MDI2NWQ5NTQifQ.Okmp89OJPGtfjPGntbnEnhvCPe10OWT-PFhLyPkN31I'
+        access_id: localStorage.getItem('token'),
+        language: null
       }
       api.postFormAPI(params).then(res => {
         console.log(res.data.data.cart_num)

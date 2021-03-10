@@ -18,6 +18,9 @@ export default {
   setRequestData (state, type) {
     state.requestDataType = type
   },
+  toCartPage (state, showPage) {
+    state.showPage = showPage
+  },
   toMoreSecPage (state, showPage) {
     state.showPage = showPage
   },

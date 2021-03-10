@@ -12,6 +12,7 @@
 import HomeList from './home/homeList'
 import MoreSec from './home/moreSec'
 import CouponCenter from './home/couponcenter'
+import ShoppingCart from './home/shoppingcart'
 import ProductDetails from '@/components/goodList/productdetails/productdetails'
 export default {
   name: 'goodList',
@@ -28,7 +29,8 @@ export default {
     HomeList,
     MoreSec,
     CouponCenter,
-    ProductDetails
+    ProductDetails,
+    ShoppingCart
   }
 }
 </script>

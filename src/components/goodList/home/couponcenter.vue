@@ -40,7 +40,11 @@
               </div>
             </div>
             <div class="right">
-              <button @click="receive(item)">立即领取</button>
+              <div style="position: absolute;top: 0;right: 0;" v-if="item.num === '0'">
+                <img src="@/assets/images/isqg.png" alt="">
+              </div>
+              <button style="background-color: #acacac;cursor: not-allowed" v-if="item.num === '0'" @click="receive(item)">已抢光</button>
+              <button v-else @click="receive(item)">立即领取</button>
             </div>
           </div>
       </div>
@@ -74,23 +78,35 @@ export default {
   methods: {
     receive (item) {
       console.log(item)
-      const params = {
-        module: 'app_pc',
-        action: 'coupon',
-        m: 'receive',
-        access_id: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2MTIzMzc0MTAsImV4cCI6MTYxMjM4MDYxMCwianRpIjoiY2NjZDg2MmIxY2QzZDEyM2NiY2RkMGY0MDI2NWQ5NTQifQ.Okmp89OJPGtfjPGntbnEnhvCPe10OWT-PFhLyPkN31I',
-        id: item.id,
-        language: null
-      }
-      api.receive(params).then(res => {
-        if (res.data.code === 404) {
+      if (item.num !== '0') {
+        if (localStorage.getItem('username')) {
+          const params = {
+            module: 'app_pc',
+            action: 'coupon',
+            m: 'receive',
+            access_id: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2MTUzNzcxOTcsImV4cCI6MTYxNTQyMDM5NywianRpIjoiNGM0M2U4MDZmNWE5MGVlZWY0MWI5Yzk3NWE3NzI1M2MifQ.KyX5Idl4o-JV3lFP8KWJg3V_ZaDHhwlEteUlu1PdPUs',
+            id: item.id,
+            language: null
+          }
+          api.receive(params).then(res => {
+            if (res.data.code === 200) {
+              this.$message.success(
+                res.data.message
+              )
+            }
+          })
+        } else {
           this.$message.error(
-            res.data.message
+            '请登录！'
           )
           this.$store.commit('ChangeLoginComponent', 'LoginContainer')
           this.$router.push('/login')
         }
-      })
+      } else {
+        this.$message.error(
+          '你来晚啦！'
+        )
+      }
     },
     getCouponCenter () {
       api.getCouponCenter(this.params).then(res => {
@@ -276,6 +292,7 @@ export default {
         /*background: radial-gradient(40rpx at right bottom,transparent 50%,#1889F6 50%);*/
         width: calc(100% - 408px);
         height: 168px;
+        position: relative;
         display: flex;
         align-items: center;
         justify-content: center;
