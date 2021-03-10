@@ -106,7 +106,12 @@ export default {
           }
           api.login(params).then(res => {
             this.$emit('getCodeImg')
-            if (res.data.code) {
+            if (res.data.code === 200) {
+              localStorage.setItem('token', res.data.data.access_id)
+              this.$store.commit('setUserName', res.data.data.user_name)
+              this.$message.success('登录成功！')
+              this.$router.push('/')
+            } else if (res.data.code === 114) {
               this.$message.error(res.data.message)
             }
             console.log(res.data.code)

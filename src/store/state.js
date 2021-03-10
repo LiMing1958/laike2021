@@ -10,5 +10,6 @@ export default {
   loginStatus: 0,
   loginComponent: 'LoginContainer',
   isShowForgetPassword: true,
-  sengForgetCodeObj: null
+  sengForgetCodeObj: null,
+  UserName: localStorage.getItem('username') ? localStorage.getItem('username') : null
 }

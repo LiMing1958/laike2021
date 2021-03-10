@@ -5,11 +5,11 @@
     </div>
     <div class="form-list">
       <a-form-model ref="ruleForm" :model="ruleForm" :rules="rules" v-bind="layout">
-        <a-form-model-item has-feedback prop="newPass">
-          <a-input style="height: 45px;" v-model.number="ruleForm.newPass" placeholder="设置账号（6-15位字母或数字）"/>
+        <a-form-model-item has-feedback prop="userId">
+          <a-input style="height: 45px;" v-model.number="ruleForm.userId" placeholder="设置账号（6-15位字母或数字）"/>
         </a-form-model-item>
         <a-form-model-item has-feedback prop="checkPass">
-          <a-input style="height: 45px;" v-model.number="ruleForm.checkPass" placeholder="设置密码（6-16位数的新密码）"/>
+          <a-input type="password" style="height: 45px;" v-model.number="ruleForm.checkPass" placeholder="设置密码（6-16位数的新密码）"/>
         </a-form-model-item>
         <a-form-model-item has-feedback prop="tel">
           <a-input v-model.number="ruleForm.tel" placeholder="请输入手机号"/>
@@ -61,33 +61,33 @@ export default {
   data () {
     // 校验新密码
     let timerPass
-    const validatePass2 = (rule, value, callback) => {
+    const validateUserId = (rule, value, callback) => {
       clearTimeout(timerPass)
       if (value === '') {
-        callback(new Error('请输入密码'))
+        callback(new Error('账号不能为空'))
       }
       timerPass = setTimeout(() => {
-        if (value.toString().length < 6 || value.toString().length > 16) {
-          callback(new Error('请输入6-16位数密码'))
+        if (value.toString().length < 6 || value.toString().length > 15) {
+          callback(new Error('请输入6-15位字母或数字'))
         } else {
           callback()
         }
       }, 500)
     }
-    // 再次输入密码校验
+    // 输入密码校验
     let validatePassword
     const validatePass = (rule, value, callback) => {
       clearTimeout(validatePassword)
       if (value === '') {
-        callback(new Error('请再次输入新密码！'))
+        callback(new Error('密码不能为空'))
       }
       validatePassword = setTimeout(() => {
-        if (this.ruleForm.checkPass !== this.ruleForm.newPass) {
-          callback(new Error('两次输入的密码不一致，请重新输入！'))
+        if (value.toString().length < 6 || value.toString().length > 16) {
+          callback(new Error('请输入6-16位字母或数字的密码'))
         } else {
           callback()
         }
-      }, 800)
+      }, 500)
     }
     let checkPending
     const checkAge = (rule, value, callback) => {
@@ -151,7 +151,7 @@ export default {
       loginType: false,
       telStatus: true,
       ruleForm: {
-        newPass: '',
+        userId: '',
         checkPass: '',
         tel: '',
         PhoneVerificationCode: '',
@@ -159,7 +159,7 @@ export default {
       },
       rules: {
         checkPass: [{ validator: validatePass, trigger: 'change' }],
-        newPass: [{ validator: validatePass2, trigger: 'change' }],
+        userId: [{ validator: validateUserId, trigger: 'change' }],
         VerificationCode: [{ validator: VirificationCode, trigger: 'change' }],
         PhoneVerificationCode: [{ validator: PhoneVerificationCode1, trigger: 'change' }],
         tel: [{ validator: checkAge, trigger: 'change' }]
@@ -181,6 +181,7 @@ export default {
               module: 'app_pc',
               action: 'login',
               m: 'user_register',
+              userId: this.ruleForm.userId,
               phone: this.ruleForm.tel,
               imgCode: this.$store.state.sengForgetCodeObj.imgCode,
               keyCode: this.ruleForm.PhoneVerificationCode,
@@ -188,13 +189,18 @@ export default {
               language: null
             }
             api.forgetPassword(params).then(res => {
+              if (res.data.code === 200) {
+                this.$message.success('恭喜您，注册成功，赶紧登录开心购吧！')
+              } else
               if (res.data.code === 113) {
                 this.$message.error(res.data.message)
-              } else if (res.data.code === 217) {
+              } else if (res.data.code === 216) {
                 this.$message.error(res.data.message)
               } else if (res.data.code === 103) {
                 this.$message.error(res.data.message)
-              } else {}
+              } else if (res.data.code === 203) {
+                this.$message.error(res.data.message)
+              }
             })
           } else {
             return false

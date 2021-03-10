@@ -11,7 +11,7 @@
           <span @click="toHome">
             <router-link to="/">
             <span class="icon-home"><a-icon type="home" /></span>
-            <span class="icon-home">商城首页</span>
+            <span class="icon-home" @click="shouye">商城首页</span>
             </router-link>
              <span class="fenge">|</span>
           </span>
@@ -26,7 +26,7 @@
     </div>
     <div class="container">
       <div class="login-register-box">
-        <component :is="$store.state.loginComponent" @forgetpassword="changecomponent" @getCode="getVerificationCode"></component>
+        <component :is="$store.state.loginComponent" @getCode="getVerificationCode"></component>
       </div>
     </div>
     <div class="footer">
@@ -66,6 +66,9 @@ export default {
     this.getVerificationCode()
   },
   methods: {
+    shouye () {
+      console.log(localStorage.getItem('username'))
+    },
     getVerificationCode () {
       const params = {
         module: 'app_pc',

@@ -56,7 +56,7 @@
           <p>电话
             <span>*</span>
           </p>
-          <input type="text" v-model="tel" placeholder="请输入电话号码" v-focus>
+          <input type="text" v-model="tel" placeholder="请输入电话号码">
         </div>
         <div class="message-content">
           <p>留言内容

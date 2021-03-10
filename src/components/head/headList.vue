@@ -5,7 +5,8 @@
         <span @click="toHome">来客推商城欢迎您</span>
       </div>
       <div class="header-right">
-        <span @click="[$router.push('/login'), $store.commit('ChangeLoginComponent', 'LoginContainer')]">【登录】</span>
+        <span v-if="$store.state.UserName">{{ $store.state.UserName }}</span>
+        <span @click="loginOrEsc">{{ $store.state.UserName ? '【退出】' : '【登录】' }}</span>
         <span @click="[$router.push('/login'), $store.commit('ChangeLoginComponent', 'register')]">【注册】</span>
         <i>|</i>
         <span>我的订单</span>
@@ -42,6 +43,17 @@ export default {
   methods: {
     OpenChat () {
       this.$store.commit('setIsOpenChat', true)
+    },
+    loginOrEsc () {
+      if (this.$store.state.UserName !== null) {
+        this.$store.commit('setUserName', null)
+        localStorage.removeItem('username')
+        this.$router.push('/login')
+        this.$store.commit('ChangeLoginComponent', 'LoginContainer')
+      } else {
+        this.$router.push('/login')
+        this.$store.commit('ChangeLoginComponent', 'LoginContainer')
+      }
     },
     handleRemoveClose () {
       document.removeEventListener('click', this.handleAdd)
