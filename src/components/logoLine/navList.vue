@@ -11,7 +11,7 @@
           </p>
         </div>
         <div class="tabContain">
-          <home v-if="item.id === 0"></home>
+          <home v-if="item.id === 0" @getcartsNumber="getNavList"></home>
         </div>
       </a-tab-pane>
     </a-tabs>

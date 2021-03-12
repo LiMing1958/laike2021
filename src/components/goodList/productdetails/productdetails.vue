@@ -55,7 +55,7 @@
                        width="420px"
                        title="领券"
                        :centered=true
-                       destroyOnClose="true">
+                       :destroyOnClose="true">
                 <div v-for="item in couponList" :key="item.id" style="
                           width: 80%;
                           height: 151px;
@@ -156,7 +156,7 @@
                    width="25%"
                    height="400px"
                    :centered=true
-                   destroyOnClose="true">
+                   :destroyOnClose="true">
             <div style="text-align: center;padding-top: 25px;display: flex;
                           align-items: center;
                           justify-content: center">
@@ -212,7 +212,7 @@
                             :footer="null"
                             width="90%"
                             :centered=true
-                            destroyOnClose="true">
+                            :destroyOnClose="true">
                    <div style="text-align: center;padding-top: 25px;" @click="commentvisible = !commentvisible">
                      <img style="width: 600px;" class="modal-code" :src="imgurl" alt="">
                    </div>
@@ -377,12 +377,12 @@ export default {
         }
         api.buyNow(params).then(res => {
           if (res.status === 200) {
-            if (this.$store.state.loginStatus === 0) {
+            if (localStorage.getItem('username')) {
+              this.$message.success('恭喜您，抢购成功！')
+            } else {
               this.$store.commit('ChangeLoginComponent', 'LoginContainer')
               this.$message.error('请先登录！')
               this.$router.push('/login')
-            } else if (this.$store.state.loginStatus === 1) {
-              this.$message.success('恭喜您，抢购成功！')
             }
           }
         })
@@ -393,7 +393,7 @@ export default {
         module: 'app_pc',
         action: 'product',
         m: 'add_cart',
-        access_id: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2MTUwMTM4NDQsImV4cCI6MTYxNTA1NzA0NCwianRpIjoiMGI0N2UzN2UwZGYyZjdmYTdlMDYzODU0NDNmYjE2OWQifQ.R0su61vqB8SaFICIAv7gNL5-Z0iGM1T9Edp090-NuQg',
+        access_id: localStorage.getItem('token'),
         pro_id: this.$store.state.products.products.id,
         num: this.$refs.inputTag.value,
         attribute_id: this.findCid(),
@@ -412,6 +412,7 @@ export default {
       } else {
         api.addToShopCart(params).then(res => {
           if (res.status === 200) {
+            this.$emit('getCartsNum')
             this.$message.success('成功加入购物车！')
           }
         })

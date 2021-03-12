@@ -7,6 +7,7 @@ export default {
   activeKey: 0,
   products: null,
   cartList: null,
+  secondList: null,
   loginStatus: 0,
   loginComponent: 'LoginContainer',
   isShowForgetPassword: true,

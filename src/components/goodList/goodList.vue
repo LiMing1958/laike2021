@@ -2,7 +2,7 @@
     <div class="goodList">
       <transition>
 <!--        <keep-alive>-->
-          <component :is="$store.state.showPage"></component>
+          <component :is="$store.state.showPage" @getCartsNum="$emit('getcartsNumber')"></component>
 <!--        </keep-alive>-->
       </transition>
     </div>

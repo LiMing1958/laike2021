@@ -12,13 +12,16 @@
       </a-breadcrumb>
     </div>
     <div class="cart-list-box">
-      <div class="empty-box">
+      <div class="empty-box" v-if="cartsList.length === 0">
         <div class="empty-img">
           <img src="@/assets/images/empty_cart.png" alt="">
           <p>购物车内暂时还没有商品，赶紧去逛逛~</p>
           <p>或者先登录同步之前加入的商品</p>
           <button>去逛逛</button>
         </div>
+      </div>
+      <div v-else class="carts-list">
+        <div class="table-title"></div>
       </div>
       <div class="recommend">
         <div class="recommend-title">
@@ -60,8 +63,10 @@ export default {
     }
   },
   mounted () {
+    // if (localStorage.getItem('username')) {
     this.getRecommendList()
     this.getCartsList()
+    // }
   },
   methods: {
     getRecommendList () {
@@ -152,6 +157,13 @@ export default {
            cursor: pointer;
          }
        }
+      }
+      .carts-list {
+        width: 100%;
+        .table-title {
+          width: 100%;
+          height: 50px;
+        }
       }
       .recommend {
         width: 100%;
