@@ -21,7 +21,7 @@
       <div class="carList" v-show="visible" @mouseleave="addClose" @mouseenter="removeClose">
         <div class="title-top">最新加入的商品</div>
         <div class="carts-box">
-          <div class="car-contain" v-for="item in $store.state.cartList.cart_list" :key="item.id">
+          <div class="car-contain" v-for="item in cartList" :key="item.id">
           <div class="cart-img">
             <img :src="item.imgurl" alt="">
           </div>
@@ -36,14 +36,14 @@
         </div>
         </div>
         <div class="car-footer">
-          <p>共 <span style="color: #d4282d">{{ $store.state.cartList.cart_num }}</span> 件商品    合计： <span style="color: #d4282d">{{ '￥' +  $store.state.cartList.cart_price }}</span></p>
+          <p>共 <span style="color: #d4282d">{{cartNumber}}</span> 件商品    合计： <span style="color: #d4282d">{{ '￥' + cartPrice}}</span></p>
           <button @click="toCartPage">去购物车</button>
         </div>
       </div>
       <div class="iconList" @mouseleave="addClose" @mouseenter="removeClose">
         <span id="searchIcon" class="iconfont" @click="handleClickSearch" ref="searchIcon">&#xe78b;</span>
         <span class="iconfont" @click="handleClickCart" ref="cartIcon">&#xe645;</span>
-        <span class="num-red">{{$store.state.cartList.cart_num}}</span>
+        <span class="num-red">{{cartNumber}}</span>
       </div>
     </div>
   </div>
@@ -51,6 +51,7 @@
 
 <script>
 import api from '@/api/api'
+import Event from '@/assets/js/event'
 export default {
   name: 'logoTitle',
   data () {
@@ -58,13 +59,32 @@ export default {
       visible: false,
       visibleSearch: false,
       cartSearchList: null,
-      searchText: null
+      searchText: null,
+      cartNumber: '',
+      cartPrice: '',
+      cartList: []
     }
   },
   mounted () {
+    Event.$on('getCatsNumber', this.getNavList)
     this.getSearchList()
+    this.getNavList()
   },
   methods: {
+    getNavList () {
+      const params = {
+        module: 'app_pc',
+        action: 'index',
+        m: 'index',
+        access_id: localStorage.getItem('token'),
+        language: null
+      }
+      api.postFormAPI(params).then(res => {
+        this.cartNumber = res.data.data.cart_num
+        this.cartPrice = res.data.data.cart_price
+        this.cartList = res.data.data.cart_list
+      }).catch(err => console.log(err))
+    },
     reload () {
       location.reload()
     },
@@ -160,6 +180,7 @@ export default {
     },
     toCartPage () {
       this.$store.commit('toCartPage', 'ShoppingCart')
+      console.log(this.$store.state.cartList)
       if (this.visible) {
         this.visible = false
         this.$refs.cartIcon.style.color = '#989898'

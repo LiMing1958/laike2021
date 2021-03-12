@@ -4,7 +4,7 @@
       <img src="@/assets/images/pcImg.png" alt="">
       <div class="current-time">
         <p>
-          <span>{{secondsList.current_time[0].title}}</span>
+          <span>{{second}}</span>
           <span>点场</span>
         </p>
         <p class="miaosha-back"></p>
@@ -17,7 +17,7 @@
     </div>
     <div class="second-list">
       <ul>
-        <li v-for="item in secondsList.pro_list" :key="item.id">
+        <li v-for="item in secondsList" :key="item.id">
           <img :src="item.imgurl" alt="">
           <div class="imgMsg">
             <p>
@@ -66,19 +66,22 @@
 </template>
 
 <script>
+import api from '@/api/api'
 import timer from './timer'
 export default {
   name: 'secondslist',
-  props: ['secondsList'],
   data () {
     return {
       visible: false,
-      showPage: 'HomeList'
+      showPage: 'HomeList',
+      second: null,
+      secondsList: null,
+      endtime: '12:00:00'
     }
   },
   computed: {
     ramaintime: function () {
-      const endTime = this.secondsList.current_time[0].endtime
+      const endTime = this.endtime
       // const startTime = this.secondsList.current_time[0].starttime
       const endTimeArr = endTime.split(':')
       // const startTimeArr = startTime.split(':')
@@ -95,10 +98,24 @@ export default {
   components: {
     timer
   },
-  mounted () {
-    console.log(this.secondsList)
+  created () {
+    this.gethotRecommendAPI()
   },
   methods: {
+    gethotRecommendAPI () {
+      const params = {
+        module: 'app_pc',
+        action: 'index',
+        m: 'home',
+        access_id: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2MTIzMzc0MTAsImV4cCI6MTYxMjM4MDYxMCwianRpIjoiY2NjZDg2MmIxY2QzZDEyM2NiY2RkMGY0MDI2NWQ5NTQifQ.Okmp89OJPGtfjPGntbnEnhvCPe10OWT-PFhLyPkN31I',
+        cid: null
+      }
+      api.gethotRecommendAPI(params).then((res) => {
+        this.second = res.data.data.seconds.current_time[0].title
+        this.endtime = res.data.data.seconds.current_time[0].endtime
+        this.secondsList = res.data.data.seconds.pro_list
+      })
+    },
     handleSecClick () {
       this.visible = !this.visible
     },
