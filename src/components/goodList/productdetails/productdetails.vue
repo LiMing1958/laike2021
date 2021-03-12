@@ -42,12 +42,12 @@
             <span>新品</span>
             <span>热销</span>
             <span>推荐</span>
-            <span>{{pro.name}}</span>
+            <span>{{name}}</span>
           </div>
           <div class="price-box">
             <p>
               <span>价格</span>
-              <span>￥{{pro.price + '.00'}}</span>
+              <span>￥{{price + '.00'}}</span>
             </p>
             <p>
               <a-modal v-model="visible"
@@ -55,7 +55,7 @@
                        width="420px"
                        title="领券"
                        :centered=true
-                       destroyOnClose="true">
+                       :destroyOnClose="true">
                 <div v-for="item in couponList" :key="item.id" style="
                           width: 80%;
                           height: 151px;
@@ -156,7 +156,7 @@
                    width="25%"
                    height="400px"
                    :centered=true
-                   destroyOnClose="true">
+                   :destroyOnClose="true">
             <div style="text-align: center;padding-top: 25px;display: flex;
                           align-items: center;
                           justify-content: center">
@@ -187,7 +187,7 @@
        <div class="product-details-left">
          <a-tabs v-model="activeKey" @change="getcomment(activeKey)">
            <a-tab-pane key="1" tab="商品详情">
-             <div class="product-container" v-html="pro.content"></div>
+             <div class="product-container" v-html="content"></div>
            </a-tab-pane>
            <a-tab-pane key="2" :tab="comments ? comments : '商品评价（0）'" force-render>
              <div class="product-review" @click="handleClickComment">
@@ -212,7 +212,7 @@
                             :footer="null"
                             width="90%"
                             :centered=true
-                            destroyOnClose="true">
+                            :destroyOnClose="true">
                    <div style="text-align: center;padding-top: 25px;" @click="commentvisible = !commentvisible">
                      <img style="width: 600px;" class="modal-code" :src="imgurl" alt="">
                    </div>
@@ -232,10 +232,10 @@
          </a-tabs>
        </div>
        <div class="product-details-right">
-         <a-affix :offset-top="top">
+         <a-affix>
            <div class="shop-list" id="shop">
              <div class="nav-item">
-               <img :src="shoplist.shop_logo" alt="">
+               <img :src="shoplistLogo" alt="">
                <span>{{shoplist.shop_name}}</span>
                <a-button class="to-shop-btn">进店逛逛</a-button>
              </div>
@@ -278,13 +278,14 @@
 <script>
 import api from '@/api/api'
 import bigimg from './bigimg/largeimg'
-// import mixin from '../../../assets/js/scrollTop'
 import mixin from '@/assets/js/scrollTop'
+import Event from '@/assets/js/event'
 export default {
   name: 'productdetails',
   mixins: [mixin],
   data () {
     return {
+      // 以后都不能赋值为null,模板会渲染报错
       items: null,
       visible: false,
       visibleShare: false,
@@ -293,6 +294,9 @@ export default {
       commentvisible: false,
       largeImg: null,
       pro: null,
+      name: '',
+      price: '',
+      content: '',
       skuBeanList: null,
       attrList: null,
       currentIndex: -1,
@@ -311,7 +315,8 @@ export default {
       commentImg: null,
       commentZhui: null,
       commentlist: null,
-      shoplist: null,
+      shoplist: {},
+      shoplistLogo: '',
       relatedRecommendations: null,
       imgurl: null,
       proImagesUrl: null,
@@ -377,12 +382,12 @@ export default {
         }
         api.buyNow(params).then(res => {
           if (res.status === 200) {
-            if (this.$store.state.loginStatus === 0) {
+            if (localStorage.getItem('username')) {
+              this.$message.success('恭喜您，抢购成功！')
+            } else {
               this.$store.commit('ChangeLoginComponent', 'LoginContainer')
               this.$message.error('请先登录！')
               this.$router.push('/login')
-            } else if (this.$store.state.loginStatus === 1) {
-              this.$message.success('恭喜您，抢购成功！')
             }
           }
         })
@@ -393,7 +398,7 @@ export default {
         module: 'app_pc',
         action: 'product',
         m: 'add_cart',
-        access_id: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2MTUwMTM4NDQsImV4cCI6MTYxNTA1NzA0NCwianRpIjoiMGI0N2UzN2UwZGYyZjdmYTdlMDYzODU0NDNmYjE2OWQifQ.R0su61vqB8SaFICIAv7gNL5-Z0iGM1T9Edp090-NuQg',
+        access_id: localStorage.getItem('token'),
         pro_id: this.$store.state.products.products.id,
         num: this.$refs.inputTag.value,
         attribute_id: this.findCid(),
@@ -412,7 +417,13 @@ export default {
       } else {
         api.addToShopCart(params).then(res => {
           if (res.status === 200) {
-            this.$message.success('成功加入购物车！')
+            if (localStorage.getItem('username')) {
+              Event.$emit('getCatsNumber')
+              this.$message.success('成功加入购物车！')
+            } else {
+              this.$message.error('请登录')
+              this.$router.push('/login')
+            }
           }
         })
       }
@@ -445,12 +456,14 @@ export default {
       var a = parseInt(document.documentElement.scrollTop)
       var p = parseInt(t - a)
       // console.log(t, a, p)
-      if (p < -1) {
-        tabNode[1].style.position = 'fixed'
-        tabNode[1].style.top = '0'
-      }
-      if (a < 938) {
-        tabNode[1].style.position = 'unset'
+      if (tabNode[1]) {
+        if (p < -1) {
+          tabNode[1].style.position = 'fixed'
+          tabNode[1].style.top = '0'
+        }
+        if (a < 938) {
+          tabNode[1].style.position = 'unset'
+        }
       }
     },
     handleRecommendations (item) {
@@ -569,6 +582,10 @@ export default {
       }
       api.getProductsDetail(params).then(res => {
         this.pro = res.data.data.pro
+        this.name = res.data.data.pro.name
+        this.price = res.data.data.pro.price
+        this.content = res.data.data.pro.content
+        // console.log('lala', this.pro.name)
         this.attrList = res.data.data.attrList
         const imgData = res.data.data.skuBeanList
         this.skuBeanList = imgData
@@ -583,7 +600,7 @@ export default {
         this.proImgArr = res.data.data.pro.img_arr
         this.commenttotal = res.data.data.comments_num
         this.comments = '商品评价（' + res.data.data.comments_num + '）'
-        this.shoplist = res.data.data.shop_list
+        this.shoplistLogo = res.data.data.shop_list.shop_logo
         this.relatedRecommendations = res.data.data.related_recommendations
         for (let i = 0; i < this.attrList.length; i++) {
           for (let j = 0; j < this.attrList[i].attr.length; j++) {

@@ -3,6 +3,9 @@ export default {
     state.UserName = username
     localStorage.setItem('username', username)
   },
+  sendSecondList (state, secondList) {
+    state.secondList = secondList
+  },
   sendverificationcode (state, obj) { // 向忘记密码兄弟组件传值
     state.sengForgetCodeObj = obj
   },

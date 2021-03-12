@@ -14,10 +14,6 @@
 </template>
 
 <script>
-import HomeSwiper from '../swiper/swiperNew'
-import HotRecommend from '../hotRecommend/hotRecommend'
-import newProduct from '../hotNewProduct/newproduct'
-import seconds from '../seconds/seconds'
 import api from '@/api/api'
 export default {
   name: 'goodList',
@@ -31,10 +27,10 @@ export default {
     }
   },
   components: {
-    HomeSwiper,
-    HotRecommend,
-    newProduct,
-    seconds
+    HomeSwiper: () => import('../swiper/swiperNew'),
+    HotRecommend: () => import('../hotRecommend/hotRecommend'),
+    newProduct: () => import('../hotNewProduct/newproduct'),
+    seconds: () => import('../seconds/seconds')
   },
   created () {
     this.gethotRecommendAPI()

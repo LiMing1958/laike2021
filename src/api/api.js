@@ -1,5 +1,11 @@
 import http from '../utils/http'
 export default {
+  getRecommendList (params) { // 购物车页面获取推荐列表
+    return http.post('/index.php?store_id=1&store_type=6', params)
+  },
+  getCartsList (params) { // 购物车页面获取购物车商品列表
+    return http.post('/index.php?store_id=1&store_type=6', params)
+  },
   getRegistrationAgreement (params) { // 获取注册协议
     return http.post('/index.php?store_id=1&store_type=6', params)
   },

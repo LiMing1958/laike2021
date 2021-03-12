@@ -2,7 +2,7 @@
     <div class="goodList">
       <transition>
 <!--        <keep-alive>-->
-          <component :is="$store.state.showPage"></component>
+          <component :is="$store.state.showPage" @getCartsNum="getCartsNum"></component>
 <!--        </keep-alive>-->
       </transition>
     </div>
@@ -31,6 +31,11 @@ export default {
     CouponCenter,
     ProductDetails,
     ShoppingCart
+  },
+  methods: {
+    getCartsNum () {
+      this.$emit('getcartsNumber')
+    }
   }
 }
 </script>

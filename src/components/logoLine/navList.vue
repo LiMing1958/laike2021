@@ -11,7 +11,7 @@
           </p>
         </div>
         <div class="tabContain">
-          <home v-if="item.id === 0"></home>
+          <home v-if="item.id === 0" @getcartsNumber="getNavList"></home>
         </div>
       </a-tab-pane>
     </a-tabs>
@@ -50,7 +50,6 @@ export default {
         language: null
       }
       api.postFormAPI(params).then(res => {
-        console.log(res.data.data.cart_num)
         if (res.status === 200) {
           // 数据处理
           const cartList = res.data.data
