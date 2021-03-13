@@ -20,28 +20,30 @@
       </div>
       <div class="carList" v-show="visible" @mouseleave="addClose" @mouseenter="removeClose">
         <div class="title-top">最新加入的商品</div>
-        <div class="car-contain">
+        <div class="carts-box">
+          <div class="car-contain" v-for="item in cartList" :key="item.id">
           <div class="cart-img">
-            <img src="https://laikeds.oss-cn-shenzhen.aliyuncs.com/1/pc/1602689618463.jpeg" alt="">
+            <img :src="item.imgurl" alt="">
           </div>
           <div class="goods">
-            <p>上传商品</p>
-            <p>M</p>
+            <p>{{item.product_title}}</p>
+            <p>{{item.attribute}}</p>
           </div>
           <div class="cart-money">
-            <p><span style="color: #d4282d">￥199.0</span> x 4</p>
+            <p><span style="color: #d4282d">{{item.price}}</span> x {{item.Goods_num}}</p>
             <p>删除</p>
           </div>
         </div>
+        </div>
         <div class="car-footer">
-          <p>共 <span style="color: #d4282d">{{ $store.state.cartList.cart_num > 0 ? $store.state.cartList.cart_num : '4'}}</span> 件商品    合计： <span style="color: #d4282d">{{ $store.state.cartList.cart_price ? '￥' +  $store.state.cartList.cart_price :'￥796'}}</span></p>
-          <button>去购物车</button>
+          <p>共 <span style="color: #d4282d">{{cartNumber}}</span> 件商品    合计： <span style="color: #d4282d">{{ '￥' + cartPrice}}</span></p>
+          <button @click="toCartPage">去购物车</button>
         </div>
       </div>
       <div class="iconList" @mouseleave="addClose" @mouseenter="removeClose">
         <span id="searchIcon" class="iconfont" @click="handleClickSearch" ref="searchIcon">&#xe78b;</span>
         <span class="iconfont" @click="handleClickCart" ref="cartIcon">&#xe645;</span>
-        <span class="num-red">4</span>
+        <span class="num-red">{{cartNumber}}</span>
       </div>
     </div>
   </div>
@@ -49,6 +51,7 @@
 
 <script>
 import api from '@/api/api'
+import Event from '@/assets/js/event'
 export default {
   name: 'logoTitle',
   data () {
@@ -56,13 +59,32 @@ export default {
       visible: false,
       visibleSearch: false,
       cartSearchList: null,
-      searchText: null
+      searchText: null,
+      cartNumber: '',
+      cartPrice: '',
+      cartList: []
     }
   },
   mounted () {
+    Event.$on('getCatsNumber', this.getNavList)
     this.getSearchList()
+    this.getNavList()
   },
   methods: {
+    getNavList () {
+      const params = {
+        module: 'app_pc',
+        action: 'index',
+        m: 'index',
+        access_id: localStorage.getItem('token'),
+        language: null
+      }
+      api.postFormAPI(params).then(res => {
+        this.cartNumber = res.data.data.cart_num
+        this.cartPrice = res.data.data.cart_price
+        this.cartList = res.data.data.cart_list
+      }).catch(err => console.log(err))
+    },
     reload () {
       location.reload()
     },
@@ -155,6 +177,14 @@ export default {
         // console.log(res.data.data)
         this.cartSearchList = res.data.data
       })
+    },
+    toCartPage () {
+      this.$store.commit('toCartPage', 'ShoppingCart')
+      console.log(this.$store.state.cartList)
+      if (this.visible) {
+        this.visible = false
+        this.$refs.cartIcon.style.color = '#989898'
+      }
     }
   }
 }
@@ -225,8 +255,7 @@ export default {
         }
       }
       .carList {
-        width: 300px;
-        height: 177px;
+        width: 360px;
         position: absolute;
         background-color: #fff;
         box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.16);
@@ -243,48 +272,54 @@ export default {
           font-weight: bold;
           height: 39px;
         }
-        .car-contain {
-          width: 100%;
-          height: 84px;
-          padding: 12px;
-          .cart-img {
-            width: 60px;
-            height: 60px;
-            margin: 0 14px;
-            float: left;
-            img {
+        .carts-box {
+          max-height: 500px;
+          overflow-y: auto;
+          .car-contain {
+            width: 100%;
+            min-height: 95px;
+            padding: 12px;
+            .cart-img {
               width: 60px;
               height: 60px;
-            }
-          }
-          .goods {
-            width: 104px;
-            height: 60px;
-            float: left;
-            text-align: left;
-            p {
-              margin-bottom: 5px;
-              &:nth-child(2) {
-                color: #999999;
-                margin-top: 7px;
+              margin: 0 14px;
+              float: left;
+              img {
+                width: 60px;
+                height: 60px;
               }
             }
-          }
-          .cart-money {
-            width: 80px;
-            height: 60px;
-            float: right;
-            text-align: right;
-            p {
-              margin-bottom: 5px;
-             &:nth-child(2) {
-               color: #333333;
-               line-height: 12px;
-               height: 12px;
-               font-size: 12px;
-               margin-top: 10px;
-               cursor: pointer;
-             }
+            .goods {
+              width: 104px;
+              height: 60px;
+              float: left;
+              text-align: left;
+              p {
+                margin-bottom: 5px;
+                &:nth-child(2) {
+                  color: #999999;
+                  margin-top: 7px;
+                }
+              }
+            }
+            .cart-money {
+              width: 90px;
+              height: 60px;
+              float: right;
+              text-align: right;
+              p {
+                width: 90px;
+                /*background-color: #98ff8b;*/
+                margin-bottom: 5px;
+                &:nth-child(2) {
+                  color: #333333;
+                  line-height: 12px;
+                  height: 12px;
+                  font-size: 12px;
+                  margin-top: 10px;
+                  cursor: pointer;
+                }
+              }
             }
           }
         }
@@ -293,6 +328,7 @@ export default {
           width: 100%;
           height: calc(177px - 39px - 84px);
           display: flex;
+          margin-top: 20px;
           align-items: center;
           padding: 10px 12px;
           background-color: #f6f6f6;
