@@ -35,22 +35,21 @@
           </ul>
         </div>
         <div class="carts-products">
-          <div class="product-list">
+          <div class="product-list" v-for="item in cartsList" :key="item.mch_id">
             <div class="shop-name">
               <input v-model="checkShopName" type="checkbox" name="checkShopName" id="checkshopname" style="margin-right: 8px;cursor: pointer;">
               <label for="checkshopname" style="color: #999999;cursor: pointer;">快快快</label>
-              <span class="coupon">
+              <span class="coupon" v-if="item.coupon_list.length  > 0">
                 <a-popover placement="bottomLeft" style="position: absolute;" id="a-popover-list">
                   <template slot="content">
-                    <ul style="width: 300px;
+                    <ul style="width: 350px;
                                height: 40px;
-                               background-color: #f9ff33;
-                               overflow: hidden"
+                               overflow: hidden;"
                     >
                       <li style="display: inline-block;
-                                 width: 60px;
+                                 width: 80px;
                                  height: 100%;
-                                 background-color: #60ff76;
+                                 background-color: #e4e4e4;
                                  overflow: hidden;
                                  line-height: 40px;
                                  text-align: center"
@@ -58,22 +57,23 @@
                         ￥1.00
                       </li>
                       <li style="display: inline-block;
-                                 width: 180px;
+                                 width: 210px;
                                  height: 100%;
                                  text-align: left;
-                                 line-height: 40px;
-                                 background-color: #ff4410;
-                                 overflow: hidden"
-                      >9999
+                                 overflow: hidden;
+                                 padding-left: 10px;"
+                      >
+                        <p>满5可用</p>
+                        <p style="color: #9c9c9c">21455522</p>
                       </li>
                       <li style="display: inline-block;
                                  width: 60px;
                                  height: 100%;
                                  text-align: center;
                                  line-height: 40px;
-                                 background-color: #60ff76;
                                  overflow: hidden"
-                      >8888
+                      >
+                        已抢光
                       </li>
                     </ul>
                   </template>
@@ -84,7 +84,33 @@
                 </a-popover>
               </span>
             </div>
-            <div class="shop-product"></div>
+            <div class="shop-product" v-for="items in item.list" :key="items.id">
+              <ul>
+                <li>
+                  <input v-model="checkproduct" type="checkbox" name="checkall" id="checkproduct" style="margin-right: 8px;cursor: pointer;">
+                  <img src="https://laikeds.oss-cn-shenzhen.aliyuncs.com/1/0/a5981693059366.jpg" alt="">
+                </li>
+                <li>
+                  <p>kkkkkkkkkkk</p>
+                  <p>9999999999999</p>
+                </li>
+                <li>单价</li>
+                <li>
+                  <div class="quantity-btn">
+                    <span class="decrease" @click.stop="decrease" ref="decreasecount"><a-icon type="minus" /></span>
+                    <input type="text" v-model="num" ref="inputTag">
+                    <span class="add" @click.stop="addCount" ref="addcount"><a-icon type="plus" /></span>
+                  </div>
+                </li>
+                <li>金额（元）</li>
+                <li>
+                  <div>
+                    <p>移到我的收藏</p>
+                    <p>删除</p>
+                  </div>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
       </div>
@@ -126,7 +152,8 @@ export default {
       recommendList: null,
       cartsList: null,
       checkShopName: [],
-      checkTotal: []
+      checkTotal: [],
+      num: '1'
     }
   },
   mounted () {
@@ -170,6 +197,30 @@ export default {
     },
     handleClickCart (item) {
       console.log(item)
+    },
+    decrease () {
+      if (this.num > 0) {
+        this.num--
+        this.$refs.inputTag.value = this.num
+        if (this.num === 0) {
+          this.$refs.decreasecount.style.cursor = 'not-allowed'
+        }
+        if (this.num < this.count) {
+          this.$refs.addcount.style.cursor = 'pointer'
+        }
+      }
+    },
+    addCount () {
+      if (this.num < this.count) {
+        this.num++
+        this.$refs.inputTag.value = this.num
+        if (this.num === this.count) {
+          this.$refs.addcount.style.cursor = 'not-allowed'
+        }
+        if (this.num > 0) {
+          this.$refs.decreasecount.style.cursor = 'pointer'
+        }
+      }
     }
   }
 }
@@ -269,18 +320,23 @@ export default {
                 }
               }
               &:nth-child(2) {
+                padding-left: 40px;
                 width: calc(100% - 820px);
               }
               &:nth-child(3) {
+                padding-left: 20px;
                 width: 100px;
               }
               &:nth-child(4) {
+                padding-left: 50px;
                 width: 200px;
               }
               &:nth-child(5) {
+                padding-left: 10px;
                 width: 200px;
               }
               &:nth-child(6) {
+                padding-left: 5px;
                 width: 200px;
               }
             }
@@ -334,6 +390,128 @@ export default {
               min-height: 121px;
               padding-left: 10px;
               border: 1px solid #d7d7d7;
+              ul {
+                width: 100%;
+                height: 121px;
+                display: flex;
+                align-items: center;
+                overflow: hidden;
+                li {
+                  display: inline-block;
+                  overflow: hidden;
+                  position: relative;
+                  color: #4e5053;
+                  text-align: center;
+                  font-weight: 500;
+                  height: 95px;
+                  line-height: 95px;
+                  img {
+                    position: absolute;
+                    width: 95px;
+                    height: 100%;
+                    margin-left: 15px;
+                  }
+                  &:first-child {
+                    width: 140px;
+                    text-align: left;
+                    label {
+                      color: #4e5053!important;
+                    }
+                    label:hover {
+                      color: red!important;
+                    }
+                  }
+                  &:nth-child(2) {
+                    width: calc(100% - 820px);
+                    line-height: normal;
+                    text-align: left;
+                    position: relative;
+                    p {
+                      &:first-child {
+                        color: #020202;
+                        font-size: 14px;
+                        position: absolute;
+                        left: 10px;
+                        top: 0;
+                      }
+                      &:last-child {
+                        position: absolute;
+                        left: 10px;
+                        bottom: 3px;
+                        font-size: 12px;
+                        color: #999999;
+                      }
+                    }
+                  }
+                  &:nth-child(3) {
+                    color: #020202;
+                    font-size: 14px;
+                    width: 100px;
+                  }
+                  &:nth-child(4) {
+                    width: 200px;
+                    line-height: normal;
+                    display: flex;
+                    align-items: center;
+                    line-height: normal;
+                    justify-content: center;
+                    .quantity-btn {
+                      margin-left: 42px;
+                      /*margin-top: 20px;*/
+                      display: inline-block;
+                      border-radius: 4px;
+                      width: 130px;
+                      height: 32px;
+                      border: 1px solid #DCDFE6;
+                      input {
+                        height: 100%;
+                        width: calc(100% - 66px);
+                        text-align: center;
+                        background-color: transparent;
+                        border-left: 1px solid #DCDFE6;
+                        border-right: 1px solid #DCDFE6;
+                      }
+                      .decrease {
+                        cursor: pointer;
+                        display: inline-block;
+                        float: left;
+                        width: 33px;
+                        font-size: 12px;
+                        height: 100%;
+                        color: #9c9c9c;
+                        font-family: Andalus;
+                        font-weight: normal;
+                        line-height: 32px;
+                        text-align: center;
+                      }
+                      .add {
+                        cursor: pointer;
+                        display: inline-block;
+                        float: right;
+                        width: 33px;
+                        height: 100%;
+                        font-size: 14px;
+                        color: #9c9c9c;
+                        font-family: Andalus;
+                        line-height: 30px;
+                        text-align: center;
+                      }
+                    }
+                  }
+                  &:nth-child(5) {
+                    color: #D4282D;
+                    font-weight: bold;
+                    width: 200px;
+                  }
+                  &:nth-child(6) {
+                    display: flex;
+                    align-items: center;
+                    line-height: normal;
+                    justify-content: center;
+                    width: 200px;
+                  }
+                }
+              }
             }
           }
         }
