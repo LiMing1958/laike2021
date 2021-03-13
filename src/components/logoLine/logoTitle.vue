@@ -180,7 +180,7 @@ export default {
     },
     toCartPage () {
       this.$store.commit('toCartPage', 'ShoppingCart')
-      console.log(this.$store.state.cartList)
+      // console.log(this.$store.state.cartList)
       if (this.visible) {
         this.visible = false
         this.$refs.cartIcon.style.color = '#989898'

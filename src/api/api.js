@@ -1,6 +1,9 @@
 import http from '../utils/http'
 export default {
-  getCartsUpdateAttribute (params) {
+  updateCarts (params) { // 提交修改购物车商品属性列表
+    return http.post('/index.php?store_id=1&store_type=6', params)
+  },
+  getCartsUpdateAttribute (params) { // 获取修改购物车商品属性列表
     return http.post('/index.php?store_id=1&store_type=6', params)
   },
   getRecommendList (params) { // 购物车页面获取推荐列表

@@ -94,7 +94,7 @@
                 </li>
                 <li>
                   <p>{{items.pro_name}}</p>
-                  <a-modal v-model="visible" cancelText="取消" okText="确定" title="Basic Modal" @ok="handleOk">
+                  <a-modal v-model="visible" cancelText="取消" okText="确定" title="修改商品属性" @ok="handleOk">
                     <div class="updateAttr-img">
                       <div>
                         <img :src="updateAtrrImgUrl" alt="">
@@ -104,11 +104,20 @@
                         <p>￥{{updatePrice}}</p>
                       </div>
                     </div>
-                    <div>
-                      <div>888</div>
+                    <div class="attrlist-box">
+                      <div class="attr-list" v-for="attrItem in updateAttrList" :key="attrItem.id">
+                        <div class="attr-name">
+                          <span>{{attrItem.attrName}}</span>
+                        </div>
+                        <div class="attr-item">
+                          <ul>
+                            <li :class="{attrSelect: attrs.select}" v-for="(attrs, index) in attrItem.attr" :key="attrs.id" @click="handleSelect(attrs, index, attrItem.attr)">{{attrs.attributeValue}}</li>
+                          </ul>
+                        </div>
+                      </div>
                     </div>
                   </a-modal>
-                  <p v-for="attr in items.skuBeanList" :key="attr.cid" @click="updateAttr(items)">{{ attr.name}} <a-icon style="margin-left: 3px;" type="down" /></p>
+                  <p v-for="attr in items.skuBeanList" :key="attr.cid" @click="updateAttr(items)">{{ selectStr.length > 0 ? selectStr : attr.name}} <a-icon style="margin-left: 3px;" type="down" /></p>
                 </li>
                 <li>￥{{items.price}}</li>
                 <li class="number-btn">
@@ -177,7 +186,10 @@ export default {
       updatePrice: '',
       updateAtrrImgUrl: '',
       skuBeanList: [],
-      updateSkuBeanListName: ''
+      updateSkuBeanListName: '',
+      updateAttrList: [],
+      selectStr: '',
+      cartId: '' // 记录修改购物车商品属性时所点击的购物车id
     }
   },
   mounted () {
@@ -270,10 +282,10 @@ export default {
       }
     },
     updateAttr (items) {
-      console.log(items)
+      this.cartId = items.id // 记录修改购物车商品属性时所点击的购物车id
+      this.updateAtrrImgUrl = items.imgurl
       this.updateTitle = items.pro_name
       this.updatePrice = items.price
-      this.updateSkuBeanListName = items.skuBeanList[0].name
       const params = {
         module: 'app_pc',
         action: 'cart',
@@ -284,15 +296,80 @@ export default {
       }
       api.getCartsUpdateAttribute(params).then(res => {
         if (res.status === 200) {
-          this.visible = true
-          this.skuBeanList = res.data.data.skuBeanList
+          if (res.data.code === 200) {
+            this.visible = true
+            this.skuBeanList = res.data.data[0].skuBeanList // 商品属性组合列表（尺码颜色规格组合后，要显示不同的价格，图片）
+            this.updateAttrList = res.data.data[0].attrList // 商品属性列表
+            this.findAttr(items)
+          } else {
+            this.$message.error('登录过期，请重新登录！')
+            this.$router.push('/login')
+          }
         }
-        console.log(res.data.data)
       })
     },
-    handleOk (e) {
-      console.log(e)
-      this.visible = false
+    findAttr (items) { // 匹配已选属性值，让已选的属性变红色
+      const arr = this.updateAttrList
+      items.attrList.forEach(item => {
+        item.attr.forEach(itemAttr => {
+          arr.forEach(arritem => {
+            arritem.attr.forEach(attrid => {
+              if (attrid.id === itemAttr.id) {
+                attrid.select = true
+              }
+              // console.log('想要的id：', attrid.id)
+            })
+          })
+          // console.log('要匹配的id：', itemAttr.id)
+        })
+      })
+    },
+    handleSelect (attrs, index, parentAttr) {
+      attrs.select = true
+      for (let i = 0; i < parentAttr.length; i++) {
+        if (i !== index) {
+          const siblings = parentAttr[i]
+          siblings.select = false
+        }
+      }
+      this.findAttributeId()
+    },
+    findAttributeId () {
+      let selectStr = ''
+      this.updateAttrList.forEach(item => {
+        item.attr.forEach(items => {
+          if (items.select) {
+            selectStr += items.attributeValue
+          }
+        })
+      })
+      let attributeid
+      this.skuBeanList.forEach(item => {
+        if (item.name === selectStr) {
+          console.log(item)
+          attributeid = item.cid
+          this.updatePrice = item.price
+          this.updateAtrrImgUrl = item.imgurl
+        }
+      })
+      return attributeid
+    },
+    handleOk () {
+      const params = {
+        module: 'app_pc',
+        action: 'cart',
+        m: 'modify_attribute',
+        access_id: localStorage.getItem('token'),
+        car_id: this.cartId,
+        attribute_id: this.findAttributeId()
+      }
+      api.updateCarts(params).then(res => {
+        if (res.status === 200) {
+          this.getCartsList()
+          this.visible = false
+          this.$message.success('修改成功，赶紧下手吧！')
+        }
+      })
     }
   }
 }
@@ -301,7 +378,9 @@ export default {
 <style scoped lang="scss">
   .updateAttr-img {
     width: 100%;
-    height: 80px;
+    height: 110px;
+    padding-bottom: 30px;
+    border-bottom: 1px solid #dfdfdf;
     /*background-color: #ff1c19;*/
     div {
       height: 100%;
@@ -326,8 +405,65 @@ export default {
       }
     }
   }
+  .attrlist-box {
+    margin-top: 25px;
+    min-width: 600px;
+    .attr-list {
+      min-width: 600px;
+      margin-bottom: 10px;
+      overflow: hidden;
+      .attr-name {
+        width: 61px;
+        height: 100%;
+        float: left;
+        span {
+          display: block;
+          float: left;
+          width: 61px;
+          height: 100%;
+          font-size: 14px;
+          color: #666666;
+        }
+      }
+      .attr-item {
+        width: calc(100% - 61px);
+        height: 100%;
+        padding-left: 15px;
+        float: right;
+        ul {
+          max-width: 800px;
+          min-height: 35px;
+          float: left;
+          li {
+            min-width: 57px;
+            padding: 0 15px;
+            height: 32px;
+            line-height: 32px;
+            margin-right: 15px;
+            margin-bottom: 10px;
+            text-align: center;
+            float: left;
+            border: 1px solid #DCDFE6;
+            color: #606266;
+            cursor: pointer;
+            &:hover {
+              border: 1px solid #d4282d;
+            }
+          }
+          .attrSelect {
+            color: #d4282d!important;
+            border: 1px solid #d4282d!important;
+          }
+        }
+      }
+    }
+  }
   ::v-deep .ant-modal-body {
     padding-top: 40px!important;
+  }
+  ::v-deep .ant-modal {
+    margin-top: 80px;
+    min-width: 600px!important;
   }
   ::v-deep .ant-btn-primary {
     background-color: #ff3b31!important;
