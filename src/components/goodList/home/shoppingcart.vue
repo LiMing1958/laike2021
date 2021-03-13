@@ -79,7 +79,7 @@
                       </li>
                     </ul>
                   </template>
-                  <a-button>
+                  <a-button style="border: 1px solid transparent;position: absolute;height: 100%;width: 100%;">
                     <span class="coupon-str">优惠券<a-icon type="down" /></span>
                     <img src="https://v3pro.houjiemeishi.com/PC/static/images/lq_bg.png" alt="">
                   </a-button>
@@ -94,6 +94,20 @@
                 </li>
                 <li>
                   <p>{{items.pro_name}}</p>
+                  <a-modal v-model="visible" cancelText="取消" okText="确定" title="Basic Modal" @ok="handleOk">
+                    <div class="updateAttr-img">
+                      <div>
+                        <img :src="updateAtrrImgUrl" alt="">
+                      </div>
+                      <div>
+                        <p>{{updateTitle}}</p>
+                        <p>￥{{updatePrice}}</p>
+                      </div>
+                    </div>
+                    <div>
+                      <div>888</div>
+                    </div>
+                  </a-modal>
                   <p v-for="attr in items.skuBeanList" :key="attr.cid" @click="updateAttr(items)">{{ attr.name}} <a-icon style="margin-left: 3px;" type="down" /></p>
                 </li>
                 <li>￥{{items.price}}</li>
@@ -157,7 +171,13 @@ export default {
       checkTotal: [],
       num: 0,
       isOverStock: false,
-      focusNum: ''
+      focusNum: '',
+      visible: false,
+      updateTitle: '',
+      updatePrice: '',
+      updateAtrrImgUrl: '',
+      skuBeanList: [],
+      updateSkuBeanListName: ''
     }
   },
   mounted () {
@@ -250,6 +270,10 @@ export default {
       }
     },
     updateAttr (items) {
+      console.log(items)
+      this.updateTitle = items.pro_name
+      this.updatePrice = items.price
+      this.updateSkuBeanListName = items.skuBeanList[0].name
       const params = {
         module: 'app_pc',
         action: 'cart',
@@ -259,28 +283,59 @@ export default {
         language: null
       }
       api.getCartsUpdateAttribute(params).then(res => {
+        if (res.status === 200) {
+          this.visible = true
+          this.skuBeanList = res.data.data.skuBeanList
+        }
         console.log(res.data.data)
       })
+    },
+    handleOk (e) {
+      console.log(e)
+      this.visible = false
     }
   }
 }
 </script>
 
 <style scoped lang="scss">
- ::v-deep .ant-btn {
-    line-height: 1.499;
-    position: absolute;
-    display: inline-block;
-    border: 1px solid transparent;
-    box-shadow: 0 2px 0 rgba(0, 0, 0, 0.015);
-    cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
-    background-color: transparent;
+  .updateAttr-img {
     width: 100%;
-    height: 100% ;
-    line-height: 25px;
-    padding: 0;
+    height: 80px;
+    /*background-color: #ff1c19;*/
+    div {
+      height: 100%;
+      float: left;
+      p {
+        margin-left: 15px;
+        &:first-child {
+          font-size: 16px;
+          color: #020202;
+          max-width: 400px;
+        }
+        &:last-child {
+          margin-top: 15px;
+          font-size: 16px;
+          color: #d4282d;
+          max-width: 400px;
+        }
+      }
+      img {
+        height: 80px;
+        width: 80px;
+      }
+    }
+  }
+  ::v-deep .ant-modal-body {
+    padding-top: 40px!important;
+  }
+  ::v-deep .ant-btn-primary {
+    background-color: #ff3b31!important;
+    border: none;
     font-size: 14px;
+    &:hover {
+      background-color: rgba(255, 59, 49, 0.84) !important;
+    }
   }
   .box {
     max-width: 1280px;
