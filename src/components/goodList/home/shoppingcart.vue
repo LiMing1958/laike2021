@@ -21,24 +21,26 @@
         </div>
       </div>
       <div v-else class="carts-list">
-        <div class="table-title">
-          <ul>
-            <li>
-              <input v-model="checkTotal" type="checkbox" name="checkall" id="checkall" style="margin-right: 8px;cursor: pointer;">
-              <label for="checkall" style="color: #999999;cursor: pointer;">全选</label>
-            </li>
-            <li>商品信息</li>
-            <li>单价</li>
-            <li>数量</li>
-            <li>金额（元）</li>
-            <li>操作</li>
-          </ul>
-        </div>
+        <a-affix>
+          <div class="table-title">
+            <ul>
+              <li>
+                <input v-model="checkTotal" type="checkbox" name="checkall" id="checkall" style="margin-right: 8px;cursor: pointer;">
+                <label for="checkall" style="color: #999999;cursor: pointer;">全选</label>
+              </li>
+              <li>商品信息</li>
+              <li>单价</li>
+              <li>数量</li>
+              <li>金额（元）</li>
+              <li>操作</li>
+            </ul>
+          </div>
+        </a-affix>
         <div class="carts-products">
           <div class="product-list" v-for="item in cartsList" :key="item.mch_id">
             <div class="shop-name">
               <input v-model="checkShopName" type="checkbox" name="checkShopName" id="checkshopname" style="margin-right: 8px;cursor: pointer;">
-              <label for="checkshopname" style="color: #999999;cursor: pointer;">快快快</label>
+              <label for="checkshopname" style="color: #999999;cursor: pointer;">{{item.mch_name}}</label>
               <span class="coupon" v-if="item.coupon_list.length  > 0">
                 <a-popover placement="bottomLeft" style="position: absolute;" id="a-popover-list">
                   <template slot="content">
@@ -92,7 +94,7 @@
                 </li>
                 <li>
                   <p>{{items.pro_name}}</p>
-                  <p>9999999999999</p>
+                  <p v-for="attr in items.skuBeanList" :key="attr.cid" @click="updateAttr(items)">{{ attr.name}} <a-icon style="margin-left: 3px;" type="down" /></p>
                 </li>
                 <li>￥{{items.price}}</li>
                 <li class="number-btn">
@@ -102,7 +104,7 @@
                     <span class="add" :class="{addstocklimit: isOverStock}" @click.stop="addCount(items)" ref="addcount"><a-icon type="plus" /></span>
                   </div>
                 </li>
-                <li>￥{{items.num * items.price}}</li>
+                <li>￥{{(items.num * items.price).toFixed(2)}}</li>
                 <li>
                   <div>
                     <p>移到我的收藏</p>
@@ -218,7 +220,6 @@ export default {
       }
     },
     addCount (items) {
-      console.log(items)
       if (parseInt(items.num) < parseInt(items.stock)) {
         this.num = parseInt(items.num)
         this.num++
@@ -247,6 +248,19 @@ export default {
         items.num = parseInt(items.stock)
         this.$message.warning('库存只有' + items.stock)
       }
+    },
+    updateAttr (items) {
+      const params = {
+        module: 'app_pc',
+        action: 'cart',
+        m: 'dj_attribute',
+        access_id: localStorage.getItem('token'),
+        car_id: items.id,
+        language: null
+      }
+      api.getCartsUpdateAttribute(params).then(res => {
+        console.log(res.data.data)
+      })
     }
   }
 }
@@ -322,6 +336,7 @@ export default {
         .table-title {
           width: 100%;
           height: 50px;
+          padding-left: 5px;
           background-color: #e2e2e2;
           ul {
             width: 100%;
@@ -380,7 +395,9 @@ export default {
               align-items: center;
               padding-left: 10px;
               label {
-                color: #4e5053!important;
+                color: #020202!important;
+                font-size: 14px!important;
+                font-weight: bold!important;
               }
               label:hover {
                 color: red!important;
@@ -449,6 +466,7 @@ export default {
                   }
                   &:nth-child(2) {
                     width: calc(100% - 820px);
+                    min-width: 175px;
                     line-height: normal;
                     text-align: left;
                     position: relative;
@@ -465,7 +483,11 @@ export default {
                         left: 10px;
                         bottom: 3px;
                         font-size: 12px;
+                        cursor: pointer;
                         color: #999999;
+                        &:hover {
+                          color: red;
+                        }
                       }
                     }
                   }

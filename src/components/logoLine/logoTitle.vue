@@ -22,18 +22,18 @@
         <div class="title-top">最新加入的商品</div>
         <div class="carts-box">
           <div class="car-contain" v-for="item in cartList" :key="item.id">
-          <div class="cart-img">
-            <img :src="item.imgurl" alt="">
+            <div class="cart-img">
+              <img :src="item.imgurl" alt="">
+            </div>
+            <div class="goods">
+              <p>{{item.product_title}}</p>
+              <p>{{item.attribute}}</p>
+            </div>
+            <div class="cart-money">
+              <p><span style="color: #d4282d">{{item.price}}</span> x {{item.Goods_num}}</p>
+              <p>删除</p>
+            </div>
           </div>
-          <div class="goods">
-            <p>{{item.product_title}}</p>
-            <p>{{item.attribute}}</p>
-          </div>
-          <div class="cart-money">
-            <p><span style="color: #d4282d">{{item.price}}</span> x {{item.Goods_num}}</p>
-            <p>删除</p>
-          </div>
-        </div>
         </div>
         <div class="car-footer">
           <p>共 <span style="color: #d4282d">{{cartNumber}}</span> 件商品    合计： <span style="color: #d4282d">{{ '￥' + cartPrice}}</span></p>
@@ -279,20 +279,23 @@ export default {
             width: 100%;
             min-height: 95px;
             padding: 12px;
+            overflow: hidden;
             .cart-img {
-              width: 60px;
-              height: 60px;
+              width: 70px;
+              height: 70px;
               margin: 0 14px;
               float: left;
+              overflow: hidden;
               img {
-                width: 60px;
-                height: 60px;
+                display: inline-block;
+                width: 70px;
+                height: 70px;
               }
             }
             .goods {
               width: 104px;
               height: 60px;
-              float: left;
+              display: inline-block;
               text-align: left;
               p {
                 margin-bottom: 5px;
