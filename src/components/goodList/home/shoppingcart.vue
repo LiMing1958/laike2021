@@ -85,24 +85,24 @@
               </span>
             </div>
             <div class="shop-product" v-for="items in item.list" :key="items.id">
-              <ul>
+              <ul class="shop-product-list">
                 <li>
                   <input v-model="checkproduct" type="checkbox" name="checkall" id="checkproduct" style="margin-right: 8px;cursor: pointer;">
-                  <img src="https://laikeds.oss-cn-shenzhen.aliyuncs.com/1/0/a5981693059366.jpg" alt="">
+                  <img :src="items.imgurl" alt="">
                 </li>
                 <li>
-                  <p>kkkkkkkkkkk</p>
+                  <p>{{items.pro_name}}</p>
                   <p>9999999999999</p>
                 </li>
-                <li>单价</li>
-                <li>
+                <li>￥{{items.price}}</li>
+                <li class="number-btn">
                   <div class="quantity-btn">
-                    <span class="decrease" @click.stop="decrease" ref="decreasecount"><a-icon type="minus" /></span>
-                    <input type="text" v-model="num" ref="inputTag">
-                    <span class="add" @click.stop="addCount" ref="addcount"><a-icon type="plus" /></span>
+                    <span class="decrease" @click.stop="decrease(items)" ref="decreasecount"><a-icon type="minus" /></span>
+                    <input type="text" v-model="items.num" ref="inputTag" @input="changeNum(items)" @blur="blurChange(items)" @focus="onFocus(items)">
+                    <span class="add" :class="{addstocklimit: isOverStock}" @click.stop="addCount(items)" ref="addcount"><a-icon type="plus" /></span>
                   </div>
                 </li>
-                <li>金额（元）</li>
+                <li>￥{{items.num * items.price}}</li>
                 <li>
                   <div>
                     <p>移到我的收藏</p>
@@ -153,7 +153,9 @@ export default {
       cartsList: null,
       checkShopName: [],
       checkTotal: [],
-      num: '1'
+      num: 0,
+      isOverStock: false,
+      focusNum: ''
     }
   },
   mounted () {
@@ -198,28 +200,52 @@ export default {
     handleClickCart (item) {
       console.log(item)
     },
-    decrease () {
-      if (this.num > 0) {
+    decrease (items) {
+      if (parseInt(items.num) > 0) {
+        this.num = parseInt(items.num)
         this.num--
-        this.$refs.inputTag.value = this.num
-        if (this.num === 0) {
-          this.$refs.decreasecount.style.cursor = 'not-allowed'
+        items.num = this.num
+        const target = window.event.currentTarget
+        if (parseInt(items.num) === 0) {
+          if (target.className === 'decrease') {
+            target.style.cursor = 'not-allowed'
+          }
         }
-        if (this.num < this.count) {
-          this.$refs.addcount.style.cursor = 'pointer'
+        if (parseInt(items.num) < parseInt(items.stock)) {
+          const siblingNode = target.parentElement.childNodes[2]
+          siblingNode.style.cursor = 'pointer'
         }
       }
     },
-    addCount () {
-      if (this.num < this.count) {
+    addCount (items) {
+      console.log(items)
+      if (parseInt(items.num) < parseInt(items.stock)) {
+        this.num = parseInt(items.num)
         this.num++
-        this.$refs.inputTag.value = this.num
-        if (this.num === this.count) {
-          this.$refs.addcount.style.cursor = 'not-allowed'
+        items.num = this.num
+        const target = window.event.currentTarget
+        if (parseInt(items.num) > 0) {
+          const siblingNode = target.parentElement.childNodes[0]
+          siblingNode.style.cursor = 'pointer'
+          target.style.cursor = 'pointer'
         }
-        if (this.num > 0) {
-          this.$refs.decreasecount.style.cursor = 'pointer'
+        if (parseInt(items.num) === parseInt(items.stock)) {
+          target.style.cursor = 'not-allowed'
         }
+      }
+    },
+    onFocus (items) {
+      this.focusNum = parseInt(items.num)
+    },
+    blurChange (items) {
+      if (items.num === '') {
+        items.num = this.focusNum
+      }
+    },
+    changeNum (items) {
+      if (items.num > parseInt(items.stock)) {
+        items.num = parseInt(items.stock)
+        this.$message.warning('库存只有' + items.stock)
       }
     }
   }
@@ -496,11 +522,24 @@ export default {
                         line-height: 30px;
                         text-align: center;
                       }
+                      .addstocklimit {
+                        cursor: not-allowed;
+                        display: inline-block;
+                        float: right;
+                        width: 33px;
+                        height: 100%;
+                        font-size: 14px;
+                        color: #9c9c9c;
+                        font-family: Andalus;
+                        line-height: 30px;
+                        text-align: center;
+                      }
                     }
                   }
                   &:nth-child(5) {
                     color: #D4282D;
                     font-weight: bold;
+                    background-color: transparent;
                     width: 200px;
                   }
                   &:nth-child(6) {
